@@ -1,0 +1,12 @@
+[project]
+name = "back"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "bcrypt>=5.0.0",
+    "flask>=3.1.2",
+    "flask-openapi3>=4.3.0",
+    "flask-openapi3-rapidoc>=9.3.8",
+]
