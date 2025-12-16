@@ -1,41 +1,33 @@
-from flask_openapi3 import APIBlueprint, Tag
-from structures import Post, PostList, PostSubmit, GetPostQuery
+from flask_openapi3 import APIBlueprint
+from structures import Post, PostList, PostSubmit, DepthPaging, Paging, PostId
+from .Reactions import api as reactions_api
+from .tags import post_tag
 
 api = APIBlueprint("Post", __name__, url_prefix="/posts")
+api.register_api(reactions_api)
 
-post_tag = Tag(name="Post", description="Operations related to posts")
 
-@api.get("/",
-        tags=[post_tag],
-        responses={200: PostList}
-)
-def get_posts() -> PostList:
+@api.get("/", tags=[post_tag], responses={200: PostList})
+def get_posts(
+    query: Paging,
+) -> PostList:
     raise NotImplementedError("Post retrieval not implemented yet.")
 
 
-@api.get("/<uuid>",
-        tags=[post_tag],
-        responses={200: Post}
-)
-def get_post_by_id(
-    uuid: str,
-    query: GetPostQuery
-) -> Post:
+@api.get("/<uuid:post_id>", tags=[post_tag], responses={200: Post})
+def get_post_by_id(path: PostId, query: DepthPaging) -> Post:
     raise NotImplementedError("Post retrieval by ID not implemented yet.")
 
-@api.post("/",
-          tags=[post_tag],
-          responses={201: Post},
+
+@api.post(
+    "/",
+    tags=[post_tag],
+    responses={201: Post},
 )
-def create_post(
-    body: PostSubmit
-) -> Post:
+def create_post(body: PostSubmit) -> Post:
     raise NotImplementedError("Post creation not implemented yet.")
 
-@api.delete("/<uuid>",
-        tags=[post_tag],
-        responses={204: None}
-)
-def del_post(uuid: str) -> None:
-    raise NotImplementedError("Post deletion not implemented yet.")
 
+@api.delete("/<uuid:post_id>", tags=[post_tag], responses={204: None})
+def delete_post(path: PostId) -> None:
+    raise NotImplementedError("Post deletion not implemented yet.")

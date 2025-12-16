@@ -9,8 +9,7 @@ from werkzeug.routing import BaseConverter, ValidationError
 
 # The uuid.UUID() constructor accepts various formats, so use a strict
 # regular expression to keep urls unique.
-UUID_RE = re.compile(
-    r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
+UUID_RE = re.compile(r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
 
 
 class UUIDConverter(BaseConverter):
