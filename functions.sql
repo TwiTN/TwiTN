@@ -4,6 +4,9 @@ CREATE OR REPLACE FUNCTION get_post_tree(
 )
 RETURNS TABLE (
     id        UUID,
+    title     VARCHAR,
+    body      VARCHAR,
+    author    VARCHAR,
     reply_to  UUID,
     depth     INT
 )
@@ -12,8 +15,7 @@ AS $$
 WITH RECURSIVE post_tree AS (
     -- On récupère la racine de l'arbre (post initial) avec une profondeur de 0
     SELECT
-        p.id,
-        p.reply_to,
+        p.*,
         0 AS depth
     FROM posts p
     WHERE p.id = p_root_id
@@ -22,8 +24,7 @@ WITH RECURSIVE post_tree AS (
 
     -- On récupère récursivement les réponses aux posts précédents, en augmentant la profondeur à chaque niveau
     SELECT
-        p.id,
-        p.reply_to,
+        p.*,
         pt.depth + 1
     FROM post_tree pt
     JOIN posts p ON p.reply_to = pt.id
