@@ -51,3 +51,11 @@ def login_user(
     body: UserLogin
 ) -> User:
     raise NotImplementedError("User login not implemented yet.")
+
+@api.get(
+    "/logout",
+    responses={200: None},
+    tags=[user_tag]
+)
+def logout_user():
+    raise NotImplementedError("User logout not implemented yet.")
