@@ -18,7 +18,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "bcrypt" },
     { name = "flask" },
-    { name = "flask-openapi3" },
+    { name = "flask-openapi3", extra = ["swagger"] },
     { name = "flask-openapi3-rapidoc" },
 ]
 
@@ -26,7 +26,7 @@ dependencies = [
 requires-dist = [
     { name = "bcrypt", specifier = ">=5.0.0" },
     { name = "flask", specifier = ">=3.1.2" },
-    { name = "flask-openapi3", specifier = ">=4.3.0" },
+    { name = "flask-openapi3", extras = ["swagger"], specifier = ">=4.3.0" },
     { name = "flask-openapi3-rapidoc", specifier = ">=9.3.8" },
 ]
 
@@ -141,6 +141,11 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/b5/04/874bbe6ac7bad94c753891001db45aa48487743fb8559d9291d3a6fef737/flask_openapi3-4.3.0-py3-none-any.whl", hash = "sha256:4c1a663acd167c4c7008a2de926d44b6667a77ddc2cd52ecfce3ddb6dfd6fb39", size = 46492, upload-time = "2025-10-18T06:07:31.342Z" },
 ]
 
+[package.optional-dependencies]
+swagger = [
+    { name = "flask-openapi3-swagger" },
+]
+
 [[package]]
 name = "flask-openapi3-rapidoc"
 version = "9.3.8"
@@ -151,6 +156,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/82/1f/07405956cc53775add9ff8b520b4ce73d8afff32b4ac91b3c74dbdbd4ec5/flask_openapi3_rapidoc-9.3.8.tar.gz", hash = "sha256:f298d2f5cb1019c4f394f0b358cade68084555c1499c03abec7cd50b6127459d", size = 221774, upload-time = "2024-10-12T02:02:35.551Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c9/17/a4ac71b8dc36079c9ed7204b56dce8a6ac2ddc93dafc507806572a3244a7/flask_openapi3_rapidoc-9.3.8-py3-none-any.whl", hash = "sha256:3785ccaeff56c8644f03d8be7a5ba1d9a2bfa9237f55b38703ff332742403fea", size = 223034, upload-time = "2024-10-12T02:02:34.365Z" },
+]
+
+[[package]]
+name = "flask-openapi3-swagger"
+version = "5.31.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "flask-openapi3" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/84/28/1cdf5e0f24d731a7f006b4d16bf1c9f4145222dbf8d504552804a2a21bcb/flask_openapi3_swagger-5.31.0.tar.gz", hash = "sha256:00211a418dd5cda57721deb215d64b09f70023c87208232076bc249a13aec0e6", size = 525955, upload-time = "2025-12-12T02:10:37.493Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/cd/39/67a8c5e5a155400c676bee467fd253bb54af9e548fb1cfaa83ebd731f65a/flask_openapi3_swagger-5.31.0-py3-none-any.whl", hash = "sha256:748c57decbb56ae03301ef5731bbe1faddf8d37c7e8dc11d254b0c2c9026acdd", size = 529462, upload-time = "2025-12-12T02:10:36.007Z" },
 ]
 
 [[package]]
