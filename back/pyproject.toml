@@ -10,3 +10,8 @@ dependencies = [
     "flask-openapi3[swagger]>=4.3.0",
     "gunicorn>=23.0.0",
 ]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14.9",
+]
