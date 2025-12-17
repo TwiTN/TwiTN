@@ -88,3 +88,6 @@ class UserLogin(BaseModel):
         min_length=8,
         examples=["P@ssw0rd123", "SecurePass!"]
     )
+
+class UserUUID(BaseModel):
+    uuid: str
