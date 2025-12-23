@@ -21,25 +21,25 @@ class Post(db.Model):
         nullable=False,
     )
 
-    content = db.Column(
+    body = db.Column(
         String(500),
         nullable=False,
     )
 
-    author_username = db.Column(
+    author = db.Column(
         String(20),
         ForeignKey("users.username"),
         nullable=False,
         index=True,
     )
 
-    response_to = db.Column(
+    reply_to = db.Column(
         UUID(as_uuid=True),
         ForeignKey("posts.id"),
         nullable=True,
     )
 
-    author = relationship(
+    authored_by = relationship(
         "User",
         backref="posts",
         lazy=True,

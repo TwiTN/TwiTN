@@ -38,7 +38,7 @@ def get_user_by_id(path: UserId) -> User | None:
 
 
 @api.delete("/", tags=[user_tag], responses={204: None})
-def delete_current_user(path: UserId) -> None:
+def delete_current_user() -> None:
     user_id = session.get("user_id")
     if not user_id:
         return make_error(401, "Unauthorized: No user logged in")

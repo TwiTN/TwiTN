@@ -2,8 +2,7 @@ from flask_openapi3 import APIBlueprint
 from structures import PostId, PostIdWithReaction
 from .tags import post_tag
 
-
-
+api = APIBlueprint("Reactions", __name__, url_prefix="/posts")
 
 @api.get(
     "/<uuid:post_id>/reactions",

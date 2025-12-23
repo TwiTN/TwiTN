@@ -23,12 +23,16 @@ def add_user(username, display_name, email, password):
 
 
 def delete_user(username: str):
-    user = db.session.get(User, username)
-    db.session.delete(user)
+    user = get_user(username)
+    
+    if not user:
+        return None
+    user = db.session.merge(user)
+    
     try:
+        db.session.delete(user)
         db.session.commit()
-    except IntegrityError:
+    except Exception as e:
         db.session.rollback()
-        raise Exception("Can't delete user")
-    db.session.refresh(user)
-    return user
+        raise Exception(f"Can't delete user: {e}")
+    return True
