@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 
 
 def get_user(username: str) -> User | None:
-    return db.session.get(User, username)
+    return db.session.query(User).filter(User.username == username).first()
 
 
 def add_user(username, display_name, email, password):

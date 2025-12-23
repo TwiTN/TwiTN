@@ -1,5 +1,7 @@
 from flask_openapi3 import APIBlueprint
+from flask import session
 from db import get_user, add_user, delete_user
+from lib.make_error import make_error
 from structures import User, UserSignUp, UserLogin, UserId
 from .tags import user_tag
 
@@ -14,25 +16,35 @@ api = APIBlueprint("User", __name__, url_prefix="/user")
     description="Retrieve information about the currently authenticated user.",
 )
 def get_current_user() -> User:
-    raise NotImplementedError("User retrieval not implemented yet.")
+    user_id = session.get("user_id")
+    if not user_id:
+        return make_error(401, "Unauthorized: No user logged in")
+    user = get_user(user_id)
+    if user is None:
+        return make_error(404, "User not found")
+    return user.to_dict(), 200
 
 
 @api.get(
-    "/<string:uuid>",
+    "/<string:username>",
     tags=[user_tag],
     responses={200: User},
 )
 def get_user_by_id(path: UserId) -> User | None:
     user = get_user(path.username)
     if user is None:
-        return None, 404
-    return user, 200
+        return make_error(404, "User not found")
+    return user.to_dict(), 200
 
 
-@api.delete("/<uuid>", tags=[user_tag], responses={204: None})
-def del_user(path: UserId) -> None:
-    delete_user(path.username)
-
+@api.delete("/", tags=[user_tag], responses={204: None})
+def delete_current_user(path: UserId) -> None:
+    user_id = session.get("user_id")
+    if not user_id:
+        return make_error(401, "Unauthorized: No user logged in")
+    delete_user(user_id)
+    session.pop("user_id", None)
+    return {}, 204
 
 @api.post(
     "/",
@@ -44,8 +56,8 @@ def del_user(path: UserId) -> None:
 def create_user(body: UserSignUp) -> User | None:
     user = add_user(body.username, body.display_name, body.email, body.password)
     if user is None:
-        return None, 409
-    return user, 201
+        return make_error(409, "User already exists")
+    return user.to_dict(), 201
 
 
 @api.post(
@@ -55,8 +67,13 @@ def create_user(body: UserSignUp) -> User | None:
     summary="User login",
     description="Authenticate a user and create a session.",
 )
-def login_user(body: UserLogin) -> User:
-    raise NotImplementedError("User login not implemented yet.")
+def login_user(body: UserLogin) -> dict:
+    user = get_user(body.username)
+    if user is None or user.password != body.password:
+        return make_error(401, "Invalid username or password")
+    session["user_id"] = user.username
+    
+    return user.to_dict(), 200
 
 
 @api.get(
@@ -67,4 +84,6 @@ def login_user(body: UserLogin) -> User:
     description="Logout the currently authenticated user and destroy the session.",
 )
 def logout_user():
-    raise NotImplementedError("User logout not implemented yet.")
+    session.pop("user_id", None)
+    return make_error(200, "Successfully logged out")
+

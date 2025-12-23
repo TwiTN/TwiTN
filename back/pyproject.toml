@@ -11,6 +11,7 @@ dependencies = [
     "flask-sqlalchemy>=3.1.1",
     "psycopg[binary]>=3.3.2",
     "gunicorn>=23.0.0",
+    "flask-session[cachelib]>=0.8.0",
 ]
 
 [dependency-groups]
