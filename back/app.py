@@ -18,7 +18,9 @@ app.url_map.converters["uuid"] = UUIDConverter
 
 app.register_api(api)
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql+psycopg://postgres:admin@127.0.0.1:5432/postgres"
+app.config["SQLALCHEMY_DATABASE_URI"] = (
+    "postgresql+psycopg://postgres:admin@127.0.0.1:5432/postgres"
+)
 db.init_app(app)
 
 with app.app_context():

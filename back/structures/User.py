@@ -83,9 +83,9 @@ class UserLogin(BaseModel):
     password: str = Field(
         description="Password for user authentication",
         min_length=8,
-        examples=["P@ssw0rd123", "SecurePass!"]
+        examples=["P@ssw0rd123", "SecurePass!"],
     )
+
 
 class UserId(BaseModel):
     username: str = Field(..., description="User ID (username)")
-
