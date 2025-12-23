@@ -1,5 +1,5 @@
 from flask_openapi3 import APIBlueprint
-from back.structures import PostId, PostIdWithReaction
+from structures import PostId, PostIdWithReaction
 from .tags import post_tag
 
 api = APIBlueprint("Reaction", __name__)
