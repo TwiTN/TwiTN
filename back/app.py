@@ -1,14 +1,21 @@
 from flask_openapi3 import OpenAPI, Info
 from api import api
 from db import db
+from lib import UUIDConverter
 
 info = Info(
-    title="Twi'TN API",
-    description="Api for Twi'TN application",
-    version="1.0.0"
+    title="Twi'TN API", description="Api for Twi'TN application", version="1.0.0"
 )
 
-app = OpenAPI(__name__)
+cookie = {"type": "apiKey", "in": "cookie", "name": "session_id"}
+security_schemas = {
+    "api_key": cookie,
+}
+
+app = OpenAPI(__name__, info=info, security_schemes=security_schemas)
+
+app.url_map.converters["uuid"] = UUIDConverter
+
 app.register_api(api)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql+psycopg://postgres:admin@127.0.0.1:5432/postgres"

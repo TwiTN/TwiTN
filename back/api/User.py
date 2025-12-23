@@ -1,16 +1,17 @@
-from flask_openapi3 import APIBlueprint, Tag
-from structures import User, UserSignUp, UserPatch, UserLogin,UserUUID
+from flask_openapi3 import APIBlueprint, APIBlueprint
 from db import get_user, add_user, delete_user
-
-from flask import request
+from structures import User, UserSignUp, UserPatch, UserLogin, UserId
+from .tags import user_tag
 
 api = APIBlueprint("User", __name__, url_prefix="/user")
 
-user_tag = Tag(name="User", description="Operations related to users")
 
-@api.get("/",
-        tags=[user_tag],
-        responses={200: User}
+@api.get(
+    "/",
+    tags=[user_tag],
+    responses={200: User},
+    summary="Get current user information",
+    description="Retrieve information about the currently authenticated user.",
 )
 def get_current_user() -> User:
     raise NotImplementedError("User retrieval not implemented yet.")
@@ -20,42 +21,52 @@ def get_current_user() -> User:
     tags=[user_tag],
     responses={200: User},
 )
-def get_user_by_id(path: UserUUID):
-    user = get_user(path.uuid)
-    if user==None:
-        return "<p>User not found</p>",200
-    return user.to_dict(),200
+def get_user_by_id(path: UserId) -> User | None:
+    user = get_user(path.username)
+    if user == None:
+        return None, 404
+    return user,200
 
 @api.delete("/<uuid>",
         tags=[user_tag],
         responses={204: None}
 )
-def del_user(uuid: str) -> None:
-    delete_user(uuid)
+def del_user(path: UserId) -> None:
+    delete_user(path.username)
 
-@api.post("/",
-          tags=[user_tag],
-          responses={201: User},
+@api.post(
+    "/",
+    tags=[user_tag],
+    responses={201: User},
+    summary="Create a new user",
+    description="Create a new user account.",
 )
 def create_user(
     body: UserSignUp
-) -> User:
+) -> User | None:
     user = add_user(body.username,body.display_name,body.email,body.password)
     if user==None:
-        return {},409
+        return None, 409
     return user, 201
 
-@api.patch("/<uuid>",
-           tags=[user_tag],
-           responses={200: User}
-)
-def update_user(uuid: str, body: UserPatch) -> User:
-    raise NotImplementedError("User update not implemented yet.")
 
-@api.post("/login",
-          tags=[user_tag],
-          responses={200: User})
-def login_user(
-    body: UserLogin
-) -> User:
+@api.post(
+    "/login",
+    tags=[user_tag],
+    responses={200: User},
+    summary="User login",
+    description="Authenticate a user and create a session.",
+)
+def login_user(body: UserLogin) -> User:
     raise NotImplementedError("User login not implemented yet.")
+
+
+@api.get(
+    "/logout",
+    responses={200: None},
+    tags=[user_tag],
+    summary="User logout",
+    description="Logout the currently authenticated user and destroy the session.",
+)
+def logout_user():
+    raise NotImplementedError("User logout not implemented yet.")
