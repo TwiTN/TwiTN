@@ -1,7 +1,7 @@
 from flask_openapi3 import OpenAPI, Info
-from api import api
-from db import db
-from lib import UUIDConverter
+from back.api import api
+from back.db import db
+from back.lib import UUIDConverter
 
 info = Info(
     title="Twi'TN API", description="Api for Twi'TN application", version="1.0.0"

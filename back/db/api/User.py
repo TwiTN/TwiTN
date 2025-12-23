@@ -1,5 +1,5 @@
-from db.model.User import User
-from db import db
+from back.db.model.User import User
+from back.db import db
 from sqlalchemy.exc import IntegrityError
 
 

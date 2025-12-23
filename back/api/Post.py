@@ -1,5 +1,5 @@
 from flask_openapi3 import APIBlueprint
-from structures import Post, PostList, PostSubmit, DepthPaging, Paging, PostId
+from back.structures import Post, PostList, PostSubmit, DepthPaging, Paging, PostId
 from .Reactions import api as reactions_api
 from .tags import post_tag
 
