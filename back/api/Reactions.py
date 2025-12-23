@@ -2,7 +2,7 @@ from flask_openapi3 import APIBlueprint
 from structures import PostId, PostIdWithReaction
 from .tags import post_tag
 
-api = APIBlueprint("Reaction", __name__)
+
 
 
 @api.get(
