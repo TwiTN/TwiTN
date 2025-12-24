@@ -19,13 +19,7 @@ def get_post(post_id):
 
 
 def list_posts(limit=20, offset=0):
-    return (
-        Post.query
-        .order_by(Post.created_at.desc())
-        .limit(limit)
-        .offset(offset)
-        .all()
-    )
+    return Post.query.order_by(Post.created_at.desc()).limit(limit).offset(offset).all()
 
 
 def delete_post(post_id):

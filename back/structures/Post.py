@@ -6,7 +6,6 @@ from typing import List, Optional
 from lib import UUID_RE
 
 
-
 class Post(BaseModel):
     id: str = Field(
         ...,

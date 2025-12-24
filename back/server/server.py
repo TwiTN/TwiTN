@@ -4,13 +4,14 @@ from cachelib.file import FileSystemCache
 from api import api
 from db import db
 from lib import UUIDConverter
+
 SESSION_TYPE = "cachelib"
 SESSION_SERIALIZATION_FORMAT = "json"
 SESSION_CACHELIB = FileSystemCache(threshold=500, cache_dir="/tmp/sessions")
 SQLALCHEMY_DATABASE_URI = "postgresql+psycopg://postgres:admin@127.0.0.1:5432/postgres"
 
-def create_app():
 
+def create_app():
     info = Info(
         title="Twi'TN API", description="Api for Twi'TN application", version="1.0.0"
     )
@@ -20,7 +21,6 @@ def create_app():
     }
     app = OpenAPI(__name__, info=info, security_schemes=security_schemas)
 
-    
     app.config.from_object(__name__)
     session = Session()
 
@@ -32,6 +32,5 @@ def create_app():
 
     with app.app_context():
         db.create_all()
-        
-    return app
 
+    return app

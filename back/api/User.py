@@ -46,6 +46,7 @@ def delete_current_user() -> None:
     session.pop("user_id", None)
     return {}, 204
 
+
 @api.post(
     "/",
     tags=[user_tag],
@@ -72,7 +73,7 @@ def login_user(body: UserLogin) -> dict:
     if user is None or user.password != body.password:
         return make_error(401, "Invalid username or password")
     session["user_id"] = user.username
-    
+
     return user.to_dict(), 200
 
 
@@ -86,4 +87,3 @@ def login_user(body: UserLogin) -> dict:
 def logout_user():
     session.pop("user_id", None)
     return make_error(200, "Successfully logged out")
-

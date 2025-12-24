@@ -1,6 +1,5 @@
 from sqlalchemy import text
 from db import db
-from db.model.PostTree import PostTree
 
 
 def get_post_tree(root_id, max_depth):
@@ -9,10 +8,14 @@ def get_post_tree(root_id, max_depth):
         FROM get_post_tree(:root_id, :max_depth)
     """)
 
-    return db.session.execute(
-        sql,
-        {
-            "root_id": root_id,
-            "max_depth": max_depth,
-        }
-    ).scalars().all()
+    return (
+        db.session.execute(
+            sql,
+            {
+                "root_id": root_id,
+                "max_depth": max_depth,
+            },
+        )
+        .scalars()
+        .all()
+    )

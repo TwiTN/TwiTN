@@ -24,11 +24,11 @@ def add_user(username, display_name, email, password):
 
 def delete_user(username: str):
     user = get_user(username)
-    
+
     if not user:
         return None
     user = db.session.merge(user)
-    
+
     try:
         db.session.delete(user)
         db.session.commit()

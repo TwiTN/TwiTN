@@ -6,7 +6,11 @@ class User(db.Model):
     __tablename__ = "users"
 
     username: str = db.Column(
-        String(20), unique=True, index=True, nullable=False, primary_key=True,
+        String(20),
+        unique=True,
+        index=True,
+        nullable=False,
+        primary_key=True,
     )
 
     display_name: str = db.Column(

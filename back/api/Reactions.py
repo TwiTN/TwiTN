@@ -10,6 +10,7 @@ from db.services.reaction import (
 
 api = APIBlueprint("Reactions", __name__, url_prefix="/posts")
 
+
 @api.get(
     "/<uuid:post_id>/reactions",
     tags=[post_tag],
@@ -25,6 +26,7 @@ def get_reactions_aggregate(path: PostId):
         aggregate[r.reaction] = aggregate.get(r.reaction, 0) + 1
 
     return aggregate
+
 
 @api.get(
     "/<uuid:post_id>/reactions/<string:reaction>",

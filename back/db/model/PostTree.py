@@ -9,4 +9,5 @@ class PostTree(Post):
     Modèle de lecture pour le résultat de get_post_tree.
     Hérite de Post et ajoute la profondeur dans l'arbre.
     """
+
     depth = mapped_column(Integer)
