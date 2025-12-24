@@ -66,9 +66,23 @@ def create_post(body: PostSubmit) -> Post:
     "/<uuid:post_id>", tags=[post_tag], responses={204: None}, summary="Delete a post"
 )
 def delete_post(path: PostId) -> None:
-    deleted = delete_post_service(path.post_id)
+    # Vérifier que l'utilisateur est connecté
+    if "user_id" not in session:
+        return None  # plus tard → 401
 
-    if not deleted:
-        return None  # flask_openapi3 renvoie 404
+    user = get_user(session["user_id"])
+    if user is None:
+        return None
 
+    # Récupérer le post
+    post = get_post(path.post_id)
+    if post is None:
+        return None  # 404
+
+    # Vérifier que l'utilisateur est l'auteur
+    if post.author_username != user.username:
+        return None  # plus tard → 403
+
+    # Supprimer le post
+    delete_post_service(path.post_id)
     return None  # 204 No Content

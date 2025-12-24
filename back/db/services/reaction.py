@@ -17,10 +17,11 @@ def get_reactions_for_post(post_id):
     return Reaction.query.filter_by(post_id=post_id).all()
 
 
-def remove_reaction(post_id, username):
+def remove_reaction(post_id, username, reaction):
     r = Reaction.query.filter_by(
         post_id=post_id,
         username=username,
+        reaction=reaction,
     ).first()
 
     if r is None:
@@ -29,6 +30,7 @@ def remove_reaction(post_id, username):
     db.session.delete(r)
     db.session.commit()
     return True
+
 
 
 def clear_reactions_for_post(post_id, reaction=None):

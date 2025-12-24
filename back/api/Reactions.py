@@ -1,8 +1,8 @@
+from flask import session
+from db.api.User import get_user
 from flask_openapi3 import APIBlueprint
 from structures import PostId, PostIdWithReaction
 from .tags import post_tag
-from flask import session
-from db.api.User import get_user
 from db.services.reaction import (
     add_reaction,
     get_reactions_for_post,
