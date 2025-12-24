@@ -6,6 +6,8 @@ from db.services.post import list_posts
 from db.services.post import get_post
 from db.services.post import create_post as create_post_service
 from db.services.post import delete_post as delete_post_service
+from flask import session
+from db.api.User import get_user
 
 
 api = APIBlueprint("Post", __name__, url_prefix="/posts")
@@ -43,10 +45,17 @@ def get_post_by_id(path: PostId, query: DepthPaging) -> Post:
     summary="Create a new post",
 )
 def create_post(body: PostSubmit) -> Post:
+    if "user_id" not in session:
+        return None  # plus tard → 401 Unauthorized
+
+    user = get_user(session["user_id"])
+    if user is None:
+        return None
+
     post = create_post_service(
         title=body.title,
         content=body.content,
-        author_username="TODO",  # remplacé plus tard par la session
+        author_username=user.username,
         response_to=body.response_to,
     )
 

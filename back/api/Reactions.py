@@ -1,6 +1,8 @@
 from flask_openapi3 import APIBlueprint
 from structures import PostId, PostIdWithReaction
 from .tags import post_tag
+from flask import session
+from db.api.User import get_user
 from db.services.reaction import (
     add_reaction,
     get_reactions_for_post,
@@ -47,11 +49,19 @@ def get_reaction(path: PostIdWithReaction):
     summary="Add a reaction to a post",
 )
 def add_reaction_api(path: PostIdWithReaction):
+    if "user_id" not in session:
+        return None  # plus tard → 401
+
+    user = get_user(session["user_id"])
+    if user is None:
+        return None
+
     add_reaction(
         post_id=path.post_id,
-        username="TODO",  # remplacé plus tard par la session
+        username=user.username,
         reaction=path.reaction,
     )
+
     return None
 
 
