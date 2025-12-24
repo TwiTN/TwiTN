@@ -1,8 +1,10 @@
+from __future__ import annotations
 import uuid
 from pydantic import BaseModel, RootModel, Field
 from structures.User import User
 from typing import List, Optional
 from lib import UUID_RE
+
 
 
 class Post(BaseModel):
