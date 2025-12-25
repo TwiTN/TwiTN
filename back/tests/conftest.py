@@ -1,14 +1,17 @@
 import pytest
 from server import create_app
 
+
 @pytest.fixture(scope="session")
 def app():
     app = create_app()
     yield app
 
+
 @pytest.fixture(scope="function")
 def client(app):
     return app.test_client()
+
 
 @pytest.fixture(scope="function")
 def test_user2(client):
@@ -39,10 +42,11 @@ def test_user2(client):
             "password": password,
         },
     )
-    
+
     if response.status_code == 200:
         response = client.delete("/api/user/")
         assert response.status_code == 204
+
 
 @pytest.fixture(scope="function")
 def test_user(client):
@@ -74,10 +78,11 @@ def test_user(client):
             "password": password,
         },
     )
-    
+
     if response.status_code == 200:
         response = client.delete("/api/user/")
         assert response.status_code == 204
+
 
 def login_client(client, login):
     """Helper to login a client session"""
@@ -88,11 +93,13 @@ def login_client(client, login):
     assert response.status_code == 200
     return client
 
+
 def logout_client(client):
     """Helper to logout a client session"""
     response = client.post("/api/user/logout")
     assert response.status_code == 200
     return client
+
 
 @pytest.fixture(scope="function")
 def test_post(client, test_user2):

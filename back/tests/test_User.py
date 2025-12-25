@@ -1,11 +1,13 @@
 from tests.conftest import login_client
 
+
 def test_get_user_by_id(client, test_user):
     """
     Vérifier la récupération d'un utilisateur par son ID
     """
     response = client.get(f"/api/user/{test_user['username']}")
     assert response.status_code == 200
+
 
 def test_get_user_by_id_not_found(client):
     """
@@ -20,21 +22,22 @@ def test_login_user(
     test_user,
 ):
     """Se connecter avec des identifiants valides"""
-    
+
     login_client(client, test_user)
-    
+
     response = client.get("/api/user/")
     assert response.status_code == 200
     data = response.get_json()
     assert data["username"] == test_user["username"]
     assert "password" not in data
 
+
 def test_login_user_fail(
     client,
     test_user,
 ):
     """Échec de la connexion avec des identifiants invalides"""
-    
+
     response = client.post(
         "/api/user/login",
         json={
@@ -50,9 +53,9 @@ def test_logout_user(
     test_user,
 ):
     """Se déconnecter de la session utilisateur"""
-    
+
     session = login_client(client, test_user)
-    
+
     # Verify user is logged in
     response = session.get("/api/user/")
     assert response.status_code == 200
@@ -65,13 +68,14 @@ def test_logout_user(
     me_response = session.get("/api/user/")
     assert me_response.status_code == 401
 
+
 def test_delete_current_user(
     client,
     test_user,
 ):
     """Supprimer l'utilisateur actuellement connecté"""
     session = login_client(client, test_user)
-    
+
     # Now, delete the current user
     delete_response = session.delete("/api/user/")
     assert delete_response.status_code == 204
