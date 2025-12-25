@@ -1,11 +1,14 @@
+from lib.make_error import make_error
 from flask_openapi3 import APIBlueprint
 from structures import Post, PostList, PostSubmit, DepthPaging, Paging, PostId
 from .Reactions import api as reactions_api
 from .tags import post_tag
-from db.services.post import list_posts
-from db.services.post import get_post
-from db.services.post import create_post as create_post_service
-from db.services.post import delete_post as delete_post_service
+from db.services.post import (
+    list_posts,
+    get_post,
+    create_post as create_post_service,
+    delete_post as delete_post_service,
+)
 from flask import session
 from db.api.User import get_user
 
@@ -15,9 +18,7 @@ api.register_api(reactions_api)
 
 
 @api.get("/", tags=[post_tag], responses={200: PostList}, summary="Get a list of posts")
-def get_posts(
-    query: Paging,
-) -> PostList:
+def get_posts(query: Paging) -> PostList:
     posts = list_posts(
         limit=query.limit,
         offset=query.offset,
@@ -27,13 +28,16 @@ def get_posts(
 
 
 @api.get(
-    "/<uuid:post_id>", tags=[post_tag], responses={200: Post}, summary="Get post by ID"
+    "/<uuid:post_id>",
+    tags=[post_tag],
+    responses={200: Post},
+    summary="Get post by ID",
 )
 def get_post_by_id(path: PostId, query: DepthPaging) -> Post:
     post = get_post(path.post_id)
 
     if post is None:
-        return None  # flask_openapi3 gère le 404
+        return make_error(404, "Post not found")
 
     return post.to_dict()
 
@@ -46,11 +50,11 @@ def get_post_by_id(path: PostId, query: DepthPaging) -> Post:
 )
 def create_post(body: PostSubmit) -> Post:
     if "user_id" not in session:
-        return None  # plus tard → 401 Unauthorized
+        return make_error(401, "Authentication required")
 
     user = get_user(session["user_id"])
     if user is None:
-        return None
+        return make_error(404, "User not found")
 
     post = create_post_service(
         title=body.title,
@@ -63,26 +67,25 @@ def create_post(body: PostSubmit) -> Post:
 
 
 @api.delete(
-    "/<uuid:post_id>", tags=[post_tag], responses={204: None}, summary="Delete a post"
+    "/<uuid:post_id>",
+    tags=[post_tag],
+    responses={204: None},
+    summary="Delete a post",
 )
 def delete_post(path: PostId) -> None:
-    # Vérifier que l'utilisateur est connecté
     if "user_id" not in session:
-        return None  # plus tard → 401
+        return make_error(401, "Authentication required")
 
     user = get_user(session["user_id"])
     if user is None:
-        return None
+        return make_error(404, "User not found")
 
-    # Récupérer le post
     post = get_post(path.post_id)
     if post is None:
-        return None  # 404
+        return make_error(404, "Post not found")
 
-    # Vérifier que l'utilisateur est l'auteur
     if post.author_username != user.username:
-        return None  # plus tard → 403
+        return make_error(403, "You are not allowed to delete this post")
 
-    # Supprimer le post
     delete_post_service(path.post_id)
     return None  # 204 No Content
