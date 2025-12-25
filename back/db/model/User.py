@@ -1,5 +1,6 @@
 from sqlalchemy import String
 from db import db
+import structures
 
 
 class User(db.Model):
@@ -30,9 +31,17 @@ class User(db.Model):
         nullable=False,
     )
 
-    def to_dict(self):
-        return {
-            "username": self.username,
-            "display_name": self.display_name,
-            "email": self.email,
-        }
+    posts = db.relationship(
+        "Post",
+        cascade="delete-orphan, all",
+        backref="author_fk",
+    )
+
+    def to_structure(self) -> "structures.User":
+        from structures import User as UserStructure
+
+        return UserStructure(
+            username=self.username,
+            display_name=self.display_name,
+            email=self.email,
+        )

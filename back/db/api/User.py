@@ -1,4 +1,4 @@
-from db.model.User import User
+from db.model import User
 from db import db
 from sqlalchemy.exc import IntegrityError
 

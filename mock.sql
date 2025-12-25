@@ -38,8 +38,8 @@ WITH RECURSIVE posts_recursive AS (
     CROSS JOIN (VALUES (1),(2)) AS b(branch_index)
     WHERE pr.depth < 10
 )
-INSERT INTO public.posts (id, title, body, author, reply_to)
-SELECT id, title, body, author, reply_to
+INSERT INTO public.posts (id, title, body, author, reply_to, posted_at)
+SELECT id, title, body, author, reply_to, now()
 FROM posts_recursive
 ORDER BY depth, id;
 

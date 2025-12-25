@@ -4,6 +4,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from db import db
+import structures
 
 
 class Post(db.Model):
@@ -26,7 +27,7 @@ class Post(db.Model):
         nullable=False,
     )
 
-    author_username = db.Column(
+    author = db.Column(
         String(20),
         ForeignKey("users.username"),
         nullable=False,
@@ -39,10 +40,9 @@ class Post(db.Model):
         nullable=True,
     )
 
-    author = relationship(
-        "User",
-        backref="posts",
-        lazy=True,
+    posted_at = db.Column(
+        db.DateTime,
+        nullable=False,
     )
 
     parent = relationship(
@@ -52,31 +52,14 @@ class Post(db.Model):
         lazy=True,
     )
 
-    # ✅ requis par les tests
-    @classmethod
-    def create(
-        cls,
-        title: str,
-        content: str,
-        author_username: str,
-        response_to=None,
-    ):
-        post = cls(
-            title=title,
-            body=content,
-            author_username=author_username,
-            reply_to=response_to,
-        )
-        db.session.add(post)
-        db.session.commit()
-        return post
+    def to_structure(self) -> "structures.Post":
+        from structures.Post import Post as PostStructure
 
-    # ✅ format attendu par l'API + tests
-    def to_dict(self):
-        return {
-            "id": str(self.id),
-            "title": self.title,
-            "content": self.body,
-            "author": self.author.to_dict() if self.author else None,
-            "response_to": str(self.reply_to) if self.reply_to else None,
-        }
+        return PostStructure(
+            id=str(self.id),
+            title=self.title,
+            content=self.body,
+            author=self.author_fk.to_structure() if self.author_fk else None,
+            response_to=str(self.reply_to) if self.reply_to else None,
+            replies=[reply.to_structure() for reply in self.replies],
+        )

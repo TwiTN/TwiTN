@@ -37,6 +37,7 @@ CREATE TABLE public.posts (
 	body varchar NOT NULL,
 	author varchar NOT NULL,
 	reply_to uuid NULL,
+	posted_at timestamptz NOT NULL DEFAULT now(),
 	CONSTRAINT posts_pk PRIMARY KEY (id),
 	CONSTRAINT posts_posts_fk FOREIGN KEY (reply_to) REFERENCES public.posts(id) ON DELETE CASCADE ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED,
 	CONSTRAINT posts_users_fk FOREIGN KEY (author) REFERENCES public.users(username) ON DELETE CASCADE ON UPDATE CASCADE DEFERRABLE INITIALLY DEFERRED

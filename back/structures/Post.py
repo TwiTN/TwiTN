@@ -43,6 +43,16 @@ class Post(BaseModel):
         description="List of replies to this post",
     )
 
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "title": self.title,
+            "content": self.content,
+            "author": self.author.to_dict(),
+            "response_to": self.response_to,
+            "replies": [reply.to_dict() for reply in self.replies],
+        }
+
 
 class PostSubmit(BaseModel):
     title: str = Field(
@@ -50,12 +60,12 @@ class PostSubmit(BaseModel):
         description="Title of the post",
         max_length=50,
     )
-    content: str = Field(
+    body: str = Field(
         ...,
         description="Content of the post",
         max_length=500,
     )
-    response_to: Optional[str] = Field(
+    reply_to: Optional[str] = Field(
         None,
         description="ID of the post this is responding to",
         example=str(uuid.uuid4()),
@@ -88,6 +98,9 @@ class PostList(RootModel):
 
     def __getitem__(self, item):
         return self.root[item]
+
+    def to_array(self):
+        return [post.to_dict() for post in self.root]
 
 
 class PostId(BaseModel):

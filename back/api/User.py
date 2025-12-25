@@ -1,11 +1,11 @@
 from flask_openapi3 import APIBlueprint
 from flask import session
-from db import get_user, add_user, delete_user
+from db.api import get_user, add_user, delete_user
 from lib.make_error import make_error
 from structures import User, UserSignUp, UserLogin, UserId
 from .tags import user_tag
 
-api = APIBlueprint("User", __name__, url_prefix="/api/user")
+api = APIBlueprint("User", __name__, url_prefix="user")
 
 
 @api.get(
@@ -23,7 +23,7 @@ def get_current_user():
     if user is None:
         return make_error(404, "User not found")
 
-    return user.to_dict()
+    return user.to_structure().to_dict()
 
 
 @api.get(
@@ -36,7 +36,7 @@ def get_user_by_id(path: UserId):
     if user is None:
         return make_error(404, "User not found")
 
-    return user.to_dict()
+    return user.to_structure().to_dict()
 
 
 @api.post(
@@ -55,7 +55,7 @@ def create_user(body: UserSignUp):
     if user is None:
         return make_error(409, "User already exists")
 
-    return user.to_dict(), 201
+    return user.to_structure().to_dict(), 201
 
 
 @api.post(
@@ -68,18 +68,16 @@ def login_user(body: UserLogin):
     if user is None or user.password != body.password:
         return make_error(401, "Invalid credentials")
 
-   
     session["user_id"] = body.username
 
+    return user.to_structure().to_dict()
 
 
-    return user.to_dict()
-
-
-@api.get("/logout", tags=[user_tag], responses={200: None})
+@api.post("/logout", tags=[user_tag], responses={200: None})
 def logout_user():
     session.pop("user_id", None)
-    return "", 200
+
+    return make_error(200, "Logged out")
 
 
 @api.delete(
@@ -97,4 +95,4 @@ def delete_current_user():
         return make_error(404, "User not found")
 
     session.pop("user_id", None)
-    return None
+    return make_error(204, "User deleted")

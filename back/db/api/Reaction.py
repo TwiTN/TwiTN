@@ -1,5 +1,5 @@
 from db import db
-from db.model.Reaction import Reaction
+from db.model import Reaction
 
 
 def add_reaction(post_id, username, reaction):
@@ -30,7 +30,6 @@ def remove_reaction(post_id, username, reaction):
     db.session.delete(r)
     db.session.commit()
     return True
-
 
 
 def clear_reactions_for_post(post_id, reaction=None):

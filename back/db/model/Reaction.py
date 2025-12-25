@@ -4,6 +4,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from db import db
+import structures
 
 
 class Reaction(db.Model):
@@ -56,10 +57,12 @@ class Reaction(db.Model):
         ),
     )
 
-    def to_dict(self):
-        return {
-            "id": str(self.id),
-            "post_id": str(self.post_id),
-            "username": self.username,
-            "reaction": self.reaction,
-        }
+    def to_structure(self) -> "structures.Reaction":
+        from structures import Reaction as ReactionStructure
+
+        return ReactionStructure(
+            id=str(self.id),
+            post_id=str(self.post_id),
+            username=self.username,
+            reaction=self.reaction,
+        )

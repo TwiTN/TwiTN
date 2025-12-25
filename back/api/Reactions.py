@@ -6,7 +6,7 @@ from structures import PostId, PostIdWithReaction
 from .tags import post_tag
 
 from db.api.User import get_user
-from db.services.reaction import (
+from db.api import (
     add_reaction,
     get_reactions_for_post,
     remove_reaction,
@@ -72,7 +72,7 @@ def add_reaction_api(path: PostIdWithReaction):
         reaction=path.reaction,
     )
 
-    return None  # 201 Created
+    return make_error(201, "Reaction added")
 
 
 @api.delete(
@@ -98,7 +98,7 @@ def remove_reaction_api(path: PostIdWithReaction):
     if not removed:
         return make_error(404, "Reaction not found")
 
-    return None  # 204 No Content
+    return make_error(204, "Reaction removed")
 
 
 @api.delete(
@@ -120,4 +120,4 @@ def bulk_remove_reaction(path: PostIdWithReaction):
         reaction=path.reaction,
     )
 
-    return None  # 204 No Content
+    return make_error(204, "Reactions cleared")

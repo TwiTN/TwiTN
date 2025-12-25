@@ -1,97 +1,81 @@
-import pytest
+from tests.conftest import login_client
 
-
-@pytest.mark.order(1)
-def test_get_user_by_id(client):
-    # créer l'utilisateur d'abord
-    client.post(
-        "/api/user/",
-        json={
-            "username": "test_user",
-            "display_name": "Test User",
-            "email": "test@test.com",
-            "password": "password",
-        },
-    )
-
-    response = client.get("/api/user/test_user")
+def test_get_user_by_id(client, test_user):
+    """
+    Vérifier la récupération d'un utilisateur par son ID
+    """
+    response = client.get(f"/api/user/{test_user['username']}")
     assert response.status_code == 200
 
+def test_get_user_by_id_not_found(client):
+    """
+    Vérifier la récupération d'un utilisateur inexistant par son ID → 404
+    """
+    response = client.get("/api/user/non_existent_user")
+    assert response.status_code == 404
 
-@pytest.mark.order(2)
-def test_create_user(
+
+def test_login_user(
     client,
+    test_user,
 ):
-    response = client.post(
-        "/api/user/",
-        json={
-            "username": "new_user",
-            "display_name": "New User",
-            "email": "new_user@example.com",
-            "password": "securepassword",
-        },
-    )
-    assert response.status_code == 201
+    """Se connecter avec des identifiants valides"""
+    
+    login_client(client, test_user)
+    
+    response = client.get("/api/user/")
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data["username"] == test_user["username"]
+    assert "password" not in data
 
-    get_user_response = client.get("/api/user/new_user")
-    assert get_user_response.status_code == 200
-    user_data = get_user_response.get_json()
-    assert user_data["username"] == "new_user"
-    assert user_data["display_name"] == "New User"
-    assert user_data["email"] == "new_user@example.com"
-    assert "password" not in user_data  # Ensure password is not returned
-
-
-@pytest.mark.order(3)
-def test_login_logout_user(
+def test_login_user_fail(
     client,
+    test_user,
 ):
+    """Échec de la connexion avec des identifiants invalides"""
+    
     response = client.post(
         "/api/user/login",
         json={
-            "username": "new_user",
-            "password": "securepassword",
+            "username": test_user["username"],
+            "password": "wrong_password",
         },
     )
+    assert response.status_code == 401
+
+
+def test_logout_user(
+    client,
+    test_user,
+):
+    """Se déconnecter de la session utilisateur"""
+    
+    session = login_client(client, test_user)
+    
+    # Verify user is logged in
+    response = session.get("/api/user/")
     assert response.status_code == 200
-    user_data = response.get_json()
-    assert user_data["username"] == "new_user"
-    assert user_data["display_name"] == "New User"
-    assert user_data["email"] == "new_user@example.com"
 
-    response_current_user = client.get("/api/user/")
-    assert response_current_user.status_code == 200
-    current_user_data = response_current_user.get_json()
-    assert current_user_data["username"] == "new_user"
-    assert current_user_data["display_name"] == "New User"
-    assert current_user_data["email"] == "new_user@example.com"
-
-    # logout
-
-    logout_response = client.get("/api/user/logout")
+    # Logout
+    logout_response = session.post("/api/user/logout")
     assert logout_response.status_code == 200
 
-    # verify current user is unauthorized now
-    response_current_user = client.get("/api/user/")
-    assert response_current_user.status_code == 401
+    # Verify session is cleared
+    me_response = session.get("/api/user/")
+    assert me_response.status_code == 401
 
-
-@pytest.mark.order(4)
 def test_delete_current_user(
     client,
+    test_user,
 ):
-    # login first to set the session
-    client.post(
-        "/api/user/login",
-        json={
-            "username": "new_user",
-            "password": "securepassword",
-        },
-    )
+    """Supprimer l'utilisateur actuellement connecté"""
+    session = login_client(client, test_user)
+    
     # Now, delete the current user
-    delete_response = client.delete("/api/user/")
+    delete_response = session.delete("/api/user/")
     assert delete_response.status_code == 204
 
     # Verify the user has been deleted
-    get_user_response = client.get("/api/user/new_user")
+    get_user_response = session.get(f"/api/user/{test_user['username']}")
     assert get_user_response.status_code == 404
