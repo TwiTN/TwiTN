@@ -2,14 +2,20 @@ import pytest
 
 
 @pytest.mark.order(1)
-def test_get_user_by_id(
-    client,
-):
-    # First, create a user to ensure there is one to get
-    response = client.get(
-        "/api/user/test_user",
+def test_get_user_by_id(client):
+    # créer l'utilisateur d'abord
+    client.post(
+        "/api/user/",
+        json={
+            "username": "test_user",
+            "display_name": "Test User",
+            "email": "test@test.com",
+            "password": "password",
+        },
     )
-    assert response.status_code == 200  # User should exist yet
+
+    response = client.get("/api/user/test_user")
+    assert response.status_code == 200
 
 
 @pytest.mark.order(2)

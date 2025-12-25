@@ -2,17 +2,13 @@ import pytest
 from server import create_app
 
 
-@pytest.fixture()
+@pytest.fixture
 def app():
-    app = create_app()
+    app = create_app(testing=True)
     yield app
 
 
-@pytest.fixture()
+@pytest.fixture
 def client(app):
-    return app.test_client()
+    return app.test_client(use_cookies=True)
 
-
-@pytest.fixture()
-def runner(app):
-    return app.test_cli_runner()

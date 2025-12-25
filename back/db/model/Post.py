@@ -26,7 +26,7 @@ class Post(db.Model):
         nullable=False,
     )
 
-    author = db.Column(
+    author_username = db.Column(
         String(20),
         ForeignKey("users.username"),
         nullable=False,
@@ -39,7 +39,7 @@ class Post(db.Model):
         nullable=True,
     )
 
-    authored_by = relationship(
+    author = relationship(
         "User",
         backref="posts",
         lazy=True,
@@ -52,11 +52,31 @@ class Post(db.Model):
         lazy=True,
     )
 
+    # ✅ requis par les tests
+    @classmethod
+    def create(
+        cls,
+        title: str,
+        content: str,
+        author_username: str,
+        response_to=None,
+    ):
+        post = cls(
+            title=title,
+            body=content,
+            author_username=author_username,
+            reply_to=response_to,
+        )
+        db.session.add(post)
+        db.session.commit()
+        return post
+
+    # ✅ format attendu par l'API + tests
     def to_dict(self):
         return {
             "id": str(self.id),
             "title": self.title,
-            "content": self.content,
+            "content": self.body,
             "author": self.author.to_dict() if self.author else None,
-            "response_to": str(self.response_to) if self.response_to else None,
+            "response_to": str(self.reply_to) if self.reply_to else None,
         }

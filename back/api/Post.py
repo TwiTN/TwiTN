@@ -1,6 +1,6 @@
 from lib.make_error import make_error
 from flask_openapi3 import APIBlueprint
-from structures import Post, PostList, PostSubmit, DepthPaging, Paging, PostId
+from structures import Post, PostList, PostSubmit, Paging, PostId
 from .Reactions import api as reactions_api
 from .tags import post_tag
 from db.services.post import (
@@ -17,11 +17,16 @@ api = APIBlueprint("Post", __name__, url_prefix="/posts")
 api.register_api(reactions_api)
 
 
-@api.get("/", tags=[post_tag], responses={200: PostList}, summary="Get a list of posts")
+@api.get(
+    "/",
+    tags=[post_tag],
+    responses={200: PostList},
+    summary="Get a list of posts",
+)
 def get_posts(query: Paging) -> PostList:
     posts = list_posts(
-        limit=query.limit,
-        offset=query.offset,
+        limit=getattr(query, "limit", 20),
+        offset=getattr(query, "offset", 0),
     )
 
     return PostList([post.to_dict() for post in posts])
@@ -33,7 +38,7 @@ def get_posts(query: Paging) -> PostList:
     responses={200: Post},
     summary="Get post by ID",
 )
-def get_post_by_id(path: PostId, query: DepthPaging) -> Post:
+def get_post_by_id(path: PostId) -> Post:
     post = get_post(path.post_id)
 
     if post is None:
