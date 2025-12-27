@@ -1,5 +1,7 @@
 import pytest
 from server import create_app
+from db.api.Reaction import clear_reactions_for_post
+from db import db
 
 
 @pytest.fixture(scope="session")
@@ -14,8 +16,10 @@ def client(app):
 
 
 @pytest.fixture(scope="function")
-def test_user2(client):
-    """Créer un deuxième utilisateur de test avant chaque test"""
+def test_user2(app, client):
+    with app.app_context():
+        db.session.rollback()
+
     username = "temp_user_post_test"
     password = "password"
 
@@ -37,20 +41,18 @@ def test_user2(client):
 
     response = client.post(
         "/api/user/login",
-        json={
-            "username": username,
-            "password": password,
-        },
+        json={"username": username, "password": password},
     )
-
     if response.status_code == 200:
-        response = client.delete("/api/user/")
-        assert response.status_code == 204
+        client.delete("/api/user/")
+        with app.app_context():
+            db.session.commit()
 
 
 @pytest.fixture(scope="function")
-def test_user(client):
-    """Créer un utilisateur de test avant chaque test"""
+def test_user(app, client):
+    with app.app_context():
+        db.session.rollback()
 
     username = "test_user_post_test"
     password = "password"
@@ -73,44 +75,43 @@ def test_user(client):
 
     response = client.post(
         "/api/user/login",
-        json={
-            "username": username,
-            "password": password,
-        },
+        json={"username": username, "password": password},
     )
-
     if response.status_code == 200:
-        response = client.delete("/api/user/")
-        assert response.status_code == 204
+        client.delete("/api/user/")
+        with app.app_context():
+            db.session.commit()
 
 
 def login_client(client, login):
-    """Helper to login a client session"""
-    response = client.post(
-        "/api/user/login",
-        json=login,
-    )
+    response = client.post("/api/user/login", json=login)
     assert response.status_code == 200
     return client
 
 
 def logout_client(client):
-    """Helper to logout a client session"""
     response = client.post("/api/user/logout")
     assert response.status_code == 200
     return client
 
 
 @pytest.fixture(scope="function")
-def test_post(client, test_user2):
+def test_post(app, client, test_user2):
     client = login_client(client, test_user2)
+
     response = client.post(
         "/api/posts/",
         json={
-            "title": "Test post",
-            "body": "Hello world",
+            "title": "Test post for reactions",
+            "body": "Hello world, this is a test post.",
         },
     )
     assert response.status_code == 201
+    post_data = response.get_json()
     logout_client(client)
-    yield response.get_json()
+
+    yield post_data
+
+    with app.app_context():
+        clear_reactions_for_post(post_data["id"])
+        db.session.commit()
