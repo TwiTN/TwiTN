@@ -1,7 +1,5 @@
 import pytest
 from server import create_app
-from db.api.Reaction import clear_reactions_for_post
-from db import db
 
 
 @pytest.fixture(scope="session")
@@ -16,10 +14,8 @@ def client(app):
 
 
 @pytest.fixture(scope="function")
-def test_user2(app, client):
-    with app.app_context():
-        db.session.rollback()
-
+def test_user2(client):
+    """Fixture pour l'utilisateur propriétaire du post"""
     username = "temp_user_post_test"
     password = "password"
 
@@ -38,22 +34,17 @@ def test_user2(app, client):
         "username": username,
         "password": password,
     }
-
     response = client.post(
         "/api/user/login",
         json={"username": username, "password": password},
     )
     if response.status_code == 200:
         client.delete("/api/user/")
-        with app.app_context():
-            db.session.commit()
 
 
 @pytest.fixture(scope="function")
-def test_user(app, client):
-    with app.app_context():
-        db.session.rollback()
-
+def test_user(client):
+    """Fixture pour l'utilisateur qui réagit au post"""
     username = "test_user_post_test"
     password = "password"
 
@@ -79,8 +70,6 @@ def test_user(app, client):
     )
     if response.status_code == 200:
         client.delete("/api/user/")
-        with app.app_context():
-            db.session.commit()
 
 
 def login_client(client, login):
@@ -96,7 +85,7 @@ def logout_client(client):
 
 
 @pytest.fixture(scope="function")
-def test_post(app, client, test_user2):
+def test_post(client, test_user2):
     client = login_client(client, test_user2)
 
     response = client.post(
@@ -111,7 +100,6 @@ def test_post(app, client, test_user2):
     logout_client(client)
 
     yield post_data
-
-    with app.app_context():
-        clear_reactions_for_post(post_data["id"])
-        db.session.commit()
+    client = login_client(client, test_user2)
+    client.delete(f"/api/posts/{post_data['id']}/reactions/bulk")
+    logout_client(client)

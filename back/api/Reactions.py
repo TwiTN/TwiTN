@@ -19,17 +19,16 @@ api = APIBlueprint("Reactions", __name__)
 
 @api.get("/<uuid:post_id>/reactions", tags=[post_tag])
 def get_reactions_aggregate(path: PostId):
-    summary = get_reactions_summary(path.post_id)
-    if not summary and get_post(path.post_id) is None:
+    if get_post(path.post_id) is None:
         return make_error(404, "Post not found")
-    return summary
+    return get_reactions_summary(path.post_id)
 
 
 @api.get("/<uuid:post_id>/reactions/<string:reaction>", tags=[post_tag])
 def get_reaction(path: PostIdWithReaction):
-    count = get_reaction_count(path.post_id, path.reaction)
-    if count == 0 and get_post(path.post_id) is None:
+    if get_post(path.post_id) is None:
         return make_error(404, "Post not found")
+    count = get_reaction_count(path.post_id, path.reaction)
     return {"count": count}
 
 
@@ -55,9 +54,9 @@ def remove_reaction_api(path: PostIdWithReaction):
     return make_error(204, "Reaction removed")
 
 
-@api.delete("/<uuid:post_id>/reactions/<string:reaction>/bulk", tags=[post_tag])
-def bulk_remove_reaction(path: PostIdWithReaction):
+@api.delete("/<uuid:post_id>/reactions/bulk", tags=[post_tag])
+def bulk_remove_reaction(path: PostId):
     if "user_id" not in session:
         return make_error(401, "Unauthorized")
-    clear_reactions_for_post(str(path.post_id), path.reaction)
-    return make_error(204, "Reactions cleared")
+    clear_reactions_for_post(str(path.post_id))
+    return make_error(204, "All reactions cleared")
