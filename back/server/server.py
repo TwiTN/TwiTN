@@ -7,19 +7,19 @@ from lib import UUIDConverter
 
 SESSION_TYPE = "cachelib"
 SESSION_SERIALIZATION_FORMAT = "json"
-SESSION_CACHELIB = FileSystemCache(threshold=500, cache_dir="./.sessions")
-SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
+SESSION_CACHELIB = FileSystemCache(threshold=500, cache_dir="/tmp/sessions")
+SQLALCHEMY_DATABASE_URI = "postgresql+psycopg://postgres:admin@127.0.0.1:5432/postgres"
 
 
-def create_app(testing: bool = False):
+def create_app():
     info = Info(
-        title="Twi'TN API",
-        description="Api for Twi'TN application",
-        version="1.0.0",
+        title="Twi'TN API", description="Api for Twi'TN application", version="1.0.0"
     )
 
     cookie = {"type": "apiKey", "in": "cookie", "name": "session_id"}
-    security_schemas = {"api_key": cookie}
+    security_schemas = {
+        "api_key": cookie,
+    }
 
     app = OpenAPI(
         __name__,
@@ -28,9 +28,6 @@ def create_app(testing: bool = False):
     )
 
     app.config.from_object(__name__)
-
-    if testing:
-        app.config["TESTING"] = True
 
     session = Session()
 

@@ -1,6 +1,7 @@
 from .Post import Post, PostList, PostSubmit, PostUpdate, PostId, PostIdWithReaction
 from .User import User, UserId, UserLogin, UserPatch, UserSignUp
 from .Paging import Paging, DepthPaging
+from .Reaction import Reaction
 
 __all__ = [
     "Post",
@@ -16,4 +17,5 @@ __all__ = [
     "UserSignUp",
     "Paging",
     "DepthPaging",
+    "Reaction",
 ]

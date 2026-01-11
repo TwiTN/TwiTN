@@ -1,123 +1,62 @@
 from flask import session
 from flask_openapi3 import APIBlueprint
-
 from lib.make_error import make_error
 from structures import PostId, PostIdWithReaction
 from .tags import post_tag
-
 from db.api.User import get_user
-from db.services.reaction import (
+from db.api.Post import get_post
+from db.api.Reaction import (
     add_reaction,
-    get_reactions_for_post,
     remove_reaction,
     clear_reactions_for_post,
+    get_reactions_summary,
+    get_reaction_count,
 )
 
-api = APIBlueprint("Reactions", __name__, url_prefix="/posts")
+
+api = APIBlueprint("Reactions", __name__)
 
 
-@api.get(
-    "/<uuid:post_id>/reactions",
-    tags=[post_tag],
-    responses={200: None},
-    summary="Get an aggregate of reactions for a post",
-    description="this might not be up to date because of the caching system.",
-)
+@api.get("/<uuid:post_id>/reactions", tags=[post_tag])
 def get_reactions_aggregate(path: PostId):
-    reactions = get_reactions_for_post(path.post_id)
-
-    if reactions is None:
+    if get_post(path.post_id) is None:
         return make_error(404, "Post not found")
-
-    aggregate: dict[str, int] = {}
-    for r in reactions:
-        aggregate[r.reaction] = aggregate.get(r.reaction, 0) + 1
-
-    return aggregate
+    return get_reactions_summary(path.post_id)
 
 
-@api.get(
-    "/<uuid:post_id>/reactions/<string:reaction>",
-    tags=[post_tag],
-    responses={200: None},
-    summary="Get a count of a specific reaction for a post",
-)
+@api.get("/<uuid:post_id>/reactions/<string:reaction>", tags=[post_tag])
 def get_reaction(path: PostIdWithReaction):
-    reactions = get_reactions_for_post(path.post_id)
-
-    if reactions is None:
+    if get_post(path.post_id) is None:
         return make_error(404, "Post not found")
-
-    count = sum(1 for r in reactions if r.reaction == path.reaction)
+    count = get_reaction_count(path.post_id, path.reaction)
     return {"count": count}
 
 
-@api.post(
-    "/<uuid:post_id>/reactions/<string:reaction>",
-    tags=[post_tag],
-    responses={201: None},
-    summary="Add a reaction to a post",
-)
+@api.post("/<uuid:post_id>/reactions/<string:reaction>", tags=[post_tag])
 def add_reaction_api(path: PostIdWithReaction):
     if "user_id" not in session:
-        return make_error(401, "Authentication required")
-
+        return make_error(401, "Unauthorized")
     user = get_user(session["user_id"])
     if user is None:
         return make_error(404, "User not found")
 
-    add_reaction(
-        post_id=path.post_id,
-        username=user.username,
-        reaction=path.reaction,
-    )
-
-    return None  # 201 Created
+    add_reaction(str(path.post_id), user.username, path.reaction)
+    return make_error(201, "Reaction added")
 
 
-@api.delete(
-    "/<uuid:post_id>/reactions/<string:reaction>",
-    tags=[post_tag],
-    responses={204: None},
-    summary="Removes a reaction to a post",
-)
+@api.delete("/<uuid:post_id>/reactions/<string:reaction>", tags=[post_tag])
 def remove_reaction_api(path: PostIdWithReaction):
     if "user_id" not in session:
-        return make_error(401, "Authentication required")
-
-    user = get_user(session["user_id"])
-    if user is None:
-        return make_error(404, "User not found")
-
-    removed = remove_reaction(
-        post_id=path.post_id,
-        username=user.username,
-        reaction=path.reaction,
-    )
-
+        return make_error(401, "Unauthorized")
+    removed = remove_reaction(str(path.post_id), session["user_id"], path.reaction)
     if not removed:
         return make_error(404, "Reaction not found")
+    return make_error(204, "Reaction removed")
 
-    return None  # 204 No Content
 
-
-@api.delete(
-    "/<uuid:post_id>/reactions/<string:reaction>/bulk",
-    tags=[post_tag],
-    responses={204: None},
-    summary="Removes all reactions of a specific type to a post",
-)
-def bulk_remove_reaction(path: PostIdWithReaction):
+@api.delete("/<uuid:post_id>/reactions/bulk", tags=[post_tag])
+def bulk_remove_reaction(path: PostId):
     if "user_id" not in session:
-        return make_error(401, "Authentication required")
-
-    user = get_user(session["user_id"])
-    if user is None:
-        return make_error(404, "User not found")
-
-    clear_reactions_for_post(
-        post_id=path.post_id,
-        reaction=path.reaction,
-    )
-
-    return None  # 204 No Content
+        return make_error(401, "Unauthorized")
+    clear_reactions_for_post(str(path.post_id))
+    return make_error(204, "All reactions cleared")

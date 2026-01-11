@@ -11,9 +11,8 @@
         "tags": [
           "User"
         ],
-        "summary": "Get current user information",
-        "description": "Retrieve information about the currently authenticated user.",
-        "operationId": "User_get_user__get",
+        "summary": "Get current user",
+        "operationId": "User_get_current_user__get",
         "responses": {
           "200": {
             "description": "OK",
@@ -31,8 +30,6 @@
         "tags": [
           "User"
         ],
-        "summary": "Create a new user",
-        "description": "Create a new user account.",
         "operationId": "User_create_user__post",
         "requestBody": {
           "content": {
@@ -74,55 +71,10 @@
         "tags": [
           "User"
         ],
-        "summary": "Delete current user",
-        "description": "Delete the currently authenticated user and removes the cookie.",
-        "operationId": "User_delete_user__delete",
+        "operationId": "User_delete_current_user__delete",
         "responses": {
           "204": {
             "description": "No Content"
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Update current user information",
-        "description": "Update information about the currently authenticated user.",
-        "operationId": "User_update_user__patch",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UserPatch"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Unprocessable Content",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ValidationErrorModel"
-                  }
-                }
-              }
-            }
           }
         }
       }
@@ -132,19 +84,17 @@
         "tags": [
           "User"
         ],
-        "summary": "Get user information by username",
-        "description": "Retrieve information about a user by their username.",
         "operationId": "User_get_user_by_id__string_username__get",
         "parameters": [
           {
             "name": "username",
             "in": "path",
-            "description": "User ID",
+            "description": "User ID (username)",
             "required": true,
             "schema": {
               "title": "Username",
               "type": "string",
-              "description": "User ID"
+              "description": "User ID (username)"
             }
           }
         ],
@@ -180,8 +130,6 @@
         "tags": [
           "User"
         ],
-        "summary": "User login",
-        "description": "Authenticate a user and create a session.",
         "operationId": "User_login_user_login_post",
         "requestBody": {
           "content": {
@@ -221,13 +169,11 @@
       }
     },
     "/api/user/logout": {
-      "get": {
+      "post": {
         "tags": [
           "User"
         ],
-        "summary": "User logout",
-        "description": "Logout the currently authenticated user and destroy the session.",
-        "operationId": "User_logout_user_logout_get",
+        "operationId": "User_logout_user_logout_post",
         "responses": {
           "200": {
             "description": "OK"
@@ -235,14 +181,14 @@
         }
       }
     },
-    "/api/posts/{post_id}/reactions": {
+    "/api/posts/posts/{post_id}/reactions": {
       "get": {
         "tags": [
           "Post"
         ],
         "summary": "Get an aggregate of reactions for a post",
         "description": "this might not be up to date because of the caching system.",
-        "operationId": "Reaction_get_reactions_aggregate__uuid_post_id__reactions_get",
+        "operationId": "Reactions_get_reactions_aggregate__uuid_post_id__reactions_get",
         "parameters": [
           {
             "name": "post_id",
@@ -277,13 +223,13 @@
         }
       }
     },
-    "/api/posts/{post_id}/reactions/{reaction}": {
+    "/api/posts/posts/{post_id}/reactions/{reaction}": {
       "get": {
         "tags": [
           "Post"
         ],
         "summary": "Get a count of a specific reaction for a post",
-        "operationId": "Reaction_get_reaction__uuid_post_id__reactions__string_reaction__get",
+        "operationId": "Reactions_get_reaction__uuid_post_id__reactions__string_reaction__get",
         "parameters": [
           {
             "name": "post_id",
@@ -337,7 +283,7 @@
           "Post"
         ],
         "summary": "Add a reaction to a post",
-        "operationId": "Reaction_add_reaction__uuid_post_id__reactions__string_reaction__post",
+        "operationId": "Reactions_add_reaction_api__uuid_post_id__reactions__string_reaction__post",
         "parameters": [
           {
             "name": "post_id",
@@ -391,7 +337,7 @@
           "Post"
         ],
         "summary": "Removes a reaction to a post",
-        "operationId": "Reaction_remove_reaction__uuid_post_id__reactions__string_reaction__delete",
+        "operationId": "Reactions_remove_reaction_api__uuid_post_id__reactions__string_reaction__delete",
         "parameters": [
           {
             "name": "post_id",
@@ -422,8 +368,8 @@
           }
         ],
         "responses": {
-          "201": {
-            "description": "Created"
+          "204": {
+            "description": "No Content"
           },
           "422": {
             "description": "Unprocessable Content",
@@ -441,13 +387,13 @@
         }
       }
     },
-    "/api/posts/{post_id}/reactions/{reaction}/bulk": {
+    "/api/posts/posts/{post_id}/reactions/{reaction}/bulk": {
       "delete": {
         "tags": [
           "Post"
         ],
         "summary": "Removes all reactions of a specific type to a post",
-        "operationId": "Reaction_bulk_remove_reaction__uuid_post_id__reactions__string_reaction__bulk_delete",
+        "operationId": "Reactions_bulk_remove_reaction__uuid_post_id__reactions__string_reaction__bulk_delete",
         "parameters": [
           {
             "name": "post_id",
@@ -478,8 +424,8 @@
           }
         ],
         "responses": {
-          "201": {
-            "description": "Created"
+          "204": {
+            "description": "No Content"
           },
           "422": {
             "description": "Unprocessable Content",
@@ -621,46 +567,6 @@
               "description": "Post ID",
               "format": "uuid"
             }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "description": "Page number",
-            "required": false,
-            "schema": {
-              "title": "Page",
-              "minimum": 1.0,
-              "type": "integer",
-              "description": "Page number",
-              "default": 1
-            }
-          },
-          {
-            "name": "size",
-            "in": "query",
-            "description": "Number of items per page",
-            "required": false,
-            "schema": {
-              "title": "Size",
-              "maximum": 100,
-              "minimum": 1.0,
-              "type": "integer",
-              "description": "Number of items per page",
-              "default": 10
-            }
-          },
-          {
-            "name": "depth",
-            "in": "query",
-            "description": "Depth level for nested resources",
-            "required": false,
-            "schema": {
-              "title": "Depth",
-              "minimum": 0.0,
-              "type": "integer",
-              "description": "Depth level for nested resources",
-              "default": 0
-            }
           }
         ],
         "responses": {
@@ -763,36 +669,6 @@
           }
         }
       },
-      "UserPatch": {
-        "title": "UserPatch",
-        "required": [
-          "display_name",
-          "email",
-          "password"
-        ],
-        "type": "object",
-        "properties": {
-          "display_name": {
-            "title": "Display Name",
-            "maxLength": 50,
-            "type": "string",
-            "description": "Name displayed on the user's profile"
-          },
-          "email": {
-            "title": "Email",
-            "maxLength": 100,
-            "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
-            "type": "string",
-            "description": "User's email address"
-          },
-          "password": {
-            "title": "Password",
-            "minLength": 8,
-            "type": "string",
-            "description": "Password for user authentication"
-          }
-        }
-      },
       "UserSignUp": {
         "title": "UserSignUp",
         "required": [
@@ -868,8 +744,7 @@
           "id",
           "title",
           "content",
-          "author",
-          "response_to"
+          "author"
         ],
         "type": "object",
         "properties": {
@@ -879,7 +754,7 @@
             "type": "string",
             "description": "Post ID",
             "format": "uuid",
-            "example": "b298b08d-8cb3-4791-adac-c1021b722341"
+            "example": "c4b8a755-17fb-4c4e-862a-5248329170f4"
           },
           "title": {
             "title": "Title",
@@ -910,7 +785,8 @@
             ],
             "description": "ID of the post this is responding to",
             "format": "uuid",
-            "example": "5c79c526-77af-448d-96c1-08adf6a1e384"
+            "default": null,
+            "example": "27fb660b-7625-485d-afe9-243e6a41a4dc"
           },
           "replies": {
             "title": "Replies",
@@ -926,7 +802,7 @@
         "title": "PostSubmit",
         "required": [
           "title",
-          "content"
+          "body"
         ],
         "type": "object",
         "properties": {
@@ -936,14 +812,14 @@
             "type": "string",
             "description": "Title of the post"
           },
-          "content": {
-            "title": "Content",
+          "body": {
+            "title": "Body",
             "maxLength": 500,
             "type": "string",
             "description": "Content of the post"
           },
-          "response_to": {
-            "title": "Response To",
+          "reply_to": {
+            "title": "Reply To",
             "anyOf": [
               {
                 "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
@@ -956,7 +832,7 @@
             "description": "ID of the post this is responding to",
             "format": "uuid",
             "default": null,
-            "example": "5865c2d4-5a28-4c6b-ab42-955ba899a3fd"
+            "example": "7befe0fe-832a-4f28-a2f5-902b75c0d652"
           }
         }
       },

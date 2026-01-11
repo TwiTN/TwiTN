@@ -3,7 +3,9 @@ from flask_openapi3 import APIBlueprint
 from structures import Post, PostList, PostSubmit, Paging, PostId
 from .Reactions import api as reactions_api
 from .tags import post_tag
-from db.services.post import (
+import datetime
+import time
+from db.api import (
     list_posts,
     get_post,
     create_post as create_post_service,
@@ -29,7 +31,7 @@ def get_posts(query: Paging) -> PostList:
         offset=getattr(query, "offset", 0),
     )
 
-    return PostList([post.to_dict() for post in posts])
+    return PostList([post.to_structure() for post in posts]).to_array()
 
 
 @api.get(
@@ -44,7 +46,7 @@ def get_post_by_id(path: PostId) -> Post:
     if post is None:
         return make_error(404, "Post not found")
 
-    return post.to_dict()
+    return post.to_structure().to_dict()
 
 
 @api.post(
@@ -63,12 +65,13 @@ def create_post(body: PostSubmit) -> Post:
 
     post = create_post_service(
         title=body.title,
-        content=body.content,
-        author_username=user.username,
-        response_to=body.response_to,
+        body=body.body,
+        author=user.username,
+        reply_to=body.reply_to,
+        posted_at=datetime.datetime.fromtimestamp(time.time(), datetime.timezone.utc),
     )
 
-    return post.to_dict()
+    return post.to_structure().to_dict(), 201
 
 
 @api.delete(
@@ -89,8 +92,8 @@ def delete_post(path: PostId) -> None:
     if post is None:
         return make_error(404, "Post not found")
 
-    if post.author_username != user.username:
+    if post.author != user.username:
         return make_error(403, "You are not allowed to delete this post")
 
     delete_post_service(path.post_id)
-    return None  # 204 No Content
+    return make_error(204, "Post deleted")

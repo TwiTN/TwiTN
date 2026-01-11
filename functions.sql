@@ -8,6 +8,7 @@ RETURNS TABLE (
     body      VARCHAR,
     author    VARCHAR,
     reply_to  UUID,
+    posted_at TIMESTAMPTZ,
     depth     INT
 )
 LANGUAGE sql

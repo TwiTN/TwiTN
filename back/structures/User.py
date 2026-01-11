@@ -20,6 +20,7 @@ class User(BaseModel):
         description="Hashed password for user authentication",
         min_length=8,
         exclude=True,
+        default="",
     )
 
     def update_password(self, new_password: str):
@@ -27,6 +28,13 @@ class User(BaseModel):
 
     def verify_password(self, password: str) -> bool:
         raise NotImplementedError("Password verification not implemented yet.")
+
+    def to_dict(self) -> dict:
+        return {
+            "username": self.username,
+            "display_name": self.display_name,
+            "email": self.email,
+        }
 
 
 class UserSignUp(BaseModel):
