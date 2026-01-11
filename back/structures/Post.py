@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import uuid
+from datetime import datetime
 from typing import List, Optional
 
 from pydantic import BaseModel, RootModel, Field
@@ -17,20 +18,31 @@ class Post(BaseModel):
         format="uuid",
         pattern=UUID_RE,
     )
+
     title: str = Field(
         ...,
         description="Title of the post",
         max_length=50,
     )
+
     content: str = Field(
         ...,
         description="Content of the post",
         max_length=500,
     )
+
+    created_at: datetime = Field(
+    default_factory=datetime.utcnow,
+    description="Creation timestamp of the post",
+    example="2024-01-01T12:00:00Z",
+)
+
+
     author: User = Field(
         ...,
         description="Author of the post",
     )
+
     response_to: Optional[str] = Field(
         None,
         description="ID of the post this is responding to",
@@ -38,6 +50,7 @@ class Post(BaseModel):
         format="uuid",
         pattern=UUID_RE,
     )
+
     replies: List["Post"] = Field(
         default_factory=list,
         description="List of replies to this post",
