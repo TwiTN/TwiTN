@@ -4,6 +4,7 @@ from db.api import get_user, add_user, delete_user
 from lib.make_error import make_error
 from structures import User, UserSignUp, UserLogin, UserId
 from .tags import user_tag
+from lib.security import hash_password, verify_password
 
 api = APIBlueprint("User", __name__, url_prefix="user")
 
@@ -46,11 +47,12 @@ def get_user_by_id(path: UserId):
 )
 def create_user(body: UserSignUp):
     user = add_user(
-        body.username,
-        body.display_name,
-        body.email,
-        body.password,
+    body.username,
+    body.display_name,
+    body.email,
+    hash_password(body.password),
     )
+
 
     if user is None:
         return make_error(409, "User already exists")
@@ -65,8 +67,9 @@ def create_user(body: UserSignUp):
 )
 def login_user(body: UserLogin):
     user = get_user(body.username)
-    if user is None or user.password != body.password:
+    if user is None or not verify_password(body.password, user.password):
         return make_error(401, "Invalid credentials")
+
 
     session["user_id"] = body.username
 
