@@ -69,6 +69,14 @@ const router = useRouter();
 const openPost = () => {
   router.push(`/post/${props.post.id}`);
 };
+
+const openReply = () => {
+  router.push({
+    name: 'post',
+    params: { id: props.post.id },
+    query: { reply: '1' },
+  });
+};
 </script>
 
 <template>
@@ -95,13 +103,12 @@ const openPost = () => {
             </p>
           </div>
 
-          <div @click.stop>
+          <div class="flex flex-wrap items-center gap-3" @click.stop>
+            <button v-if="showReplies" type="button" class="flex items-center gap-2 text-xs text-white/60 transition-colors hover:text-white" aria-label="Repondre a ce post" @click.stop="openReply">
+              <span class="material-symbols-outlined text-[18px]">chat_bubble</span>
+              <span>{{ totalReplies }}</span>
+            </button>
             <ReactionBar :post-id="post.id" />
-          </div>
-          
-          <div v-if="showReplies" class="flex items-center gap-2 text-xs text-white/60">
-            <span class="material-symbols-outlined text-[18px]">chat_bubble</span>
-            <span>{{ totalReplies }}</span>
           </div>
         </div>
       </div>
