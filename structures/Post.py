@@ -14,9 +14,11 @@ class Post(BaseModel):
     id: str = Field(
         ...,
         description="Post ID",
-        example=str(uuid.uuid4()),
-        format="uuid",
         pattern=UUID_RE,
+        json_schema_extra={
+            "example": str(uuid.uuid4()),
+            "format": "uuid",
+        },
     )
 
     title: str = Field(
@@ -32,9 +34,12 @@ class Post(BaseModel):
     )
 
     created_at: datetime = Field(
-        default_factory=datetime.utcnow,
+        default_factory=datetime.now,
         description="Creation timestamp of the post",
-        example="2024-01-01T12:00:00Z",
+        json_schema_extra={
+            "example": "2024-01-01T12:00:00Z",
+            "format": "date-time",
+        },
     )
 
     author: User = Field(
@@ -50,9 +55,11 @@ class Post(BaseModel):
     response_to: Optional[str] = Field(
         None,
         description="ID of the post this is responding to",
-        example=str(uuid.uuid4()),
-        format="uuid",
         pattern=UUID_RE,
+        json_schema_extra={
+            "example": str(uuid.uuid4()),
+            "format": "uuid",
+        },
     )
 
     replies: List["Post"] = Field(
@@ -105,9 +112,11 @@ class PostSubmit(BaseModel):
     reply_to: Optional[str] = Field(
         None,
         description="ID of the post this is responding to",
-        example=str(uuid.uuid4()),
-        format="uuid",
         pattern=UUID_RE,
+        json_schema_extra={
+            "example": str(uuid.uuid4()),
+            "format": "uuid",
+        },
     )
 
 
@@ -153,5 +162,7 @@ class PostIdWithReaction(PostId):
         description="Reaction type",
         max_length=1,
         min_length=1,
-        example="👍",
+        json_schema_extra={
+            "example": "👍",
+        },
     )

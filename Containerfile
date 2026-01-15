@@ -1,4 +1,4 @@
-FROM ghcr.io/astral-sh/uv:python3.14-bookworm-slim AS builder
+FROM ghcr.io/astral-sh/uv:python3.14-trixie-slim AS builder
 ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
 
 # Omit development dependencies
@@ -20,30 +20,25 @@ COPY ./www /www
 WORKDIR /www
 RUN npm install && npm run build
 
-# Then, use a final image without uv
-FROM python:3.14-slim-bookworm
-# It is important to use the image that matches the builder, as the path to the
-# Python executable must be the same, e.g., using `python:3.11-slim-bookworm`
-# will fail.
+# 1. Match the builder image exactly
+FROM python:3.14-slim-trixie
 
-# Setup a non-root user
 RUN groupadd --system --gid 999 nonroot \
  && useradd --system --gid 999 --uid 999 --create-home nonroot
 
-# Copy the application from the builder
+WORKDIR /app
+
+# 2. Ensure session directory exists and is writable
+RUN mkdir -p /tmp/sessions && chown nonroot:nonroot /tmp/sessions
+
 COPY --from=builder --chown=nonroot:nonroot /app /app
 COPY --from=frontend --chown=nonroot:nonroot /www/dist /app/www/dist
 
-# Place executables in the environment at the front of the path
 ENV PATH="/app/.venv/bin:$PATH"
-
-# Use the non-root user to run our application
+ENV PYTHONPATH="/app"
 USER nonroot
-
-# Use `/app` as the working directory
-WORKDIR /app
 
 EXPOSE 8000
 
-# Run the FastAPI application by default
-CMD ["gunicorn", "-w", "4", "app:app", "--bind", "0.0.0.0:8000"]
+# 3. Use an explicit path to the app object to avoid ambiguity
+CMD ["gunicorn", "-w", "4", "main:create_app()", "--bind", "0.0.0.0:8000"]
