@@ -74,15 +74,3 @@ CREATE TABLE public.post_media (
 	CONSTRAINT post_media_media_fk FOREIGN KEY (media) REFERENCES public.media(hash) ON DELETE RESTRICT ON UPDATE RESTRICT,
 	CONSTRAINT post_media_posts_fk FOREIGN KEY (post) REFERENCES public.posts(id) ON DELETE SET NULL ON UPDATE CASCADE
 );
-
-
--- public.reactions_count source
-
-CREATE MATERIALIZED VIEW public.reactions_count
-TABLESPACE pg_default
-AS SELECT post,
-    "character",
-    count(*) AS count
-   FROM reaction
-  GROUP BY post, "character"
-WITH DATA;
