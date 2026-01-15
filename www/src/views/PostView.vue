@@ -61,7 +61,7 @@ const loadPost = async () => {
   error.value = "";
   post.value = null;
   try {
-    const res = await apiFetch(`/api/posts/${route.params.id}?depth=1`);
+    const res = await apiFetch(`/api/posts/${route.params.id}`);
     if (res.ok) {
       post.value = await res.json();
     } else {
