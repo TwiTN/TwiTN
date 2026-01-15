@@ -61,5 +61,6 @@ class Post(db.Model):
             content=self.body,
             author=self.author_fk.to_structure() if self.author_fk else None,
             response_to=str(self.reply_to) if self.reply_to else None,
+            posted_at=self.posted_at.isoformat(),
             replies=[reply.to_structure() for reply in self.replies],
         )

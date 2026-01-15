@@ -41,6 +41,11 @@ class Post(BaseModel):
         ...,
         description="Author of the post",
     )
+    
+    posted_at: str = Field(
+        ...,
+        description="Post creation date",
+    )
 
     response_to: Optional[str] = Field(
         None,
@@ -62,6 +67,7 @@ class Post(BaseModel):
             "content": self.content,
             "author": self.author.to_dict(),
             "response_to": self.response_to,
+            "posted_at": self.posted_at,
             "replies": [reply.to_dict() for reply in self.replies],
         }
 
