@@ -62,4 +62,5 @@ class Post(db.Model):
             replies=[reply.to_structure(depth=depth - 1) for reply in self.replies]
             if depth > 0
             else [],
+            posted_at=self.posted_at.isoformat(),
         )

@@ -32,13 +32,21 @@ const authorHandle = computed(() => {
   return props.post.author.username || 'unknown';
 });
 
-const formattedDate = computed(() => {
-  const value = props.post?.posted_at;
+const postDate = computed(() => {
+  const value = props.post?.posted_at ?? props.post?.postedAt;
   if (!value) {
-    return '';
+    return null;
   }
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+  return date;
+});
+
+const formattedDate = computed(() => {
+  const date = postDate.value;
+  if (!date) {
     return '';
   }
   return new Intl.DateTimeFormat('fr-FR', {
@@ -49,6 +57,31 @@ const formattedDate = computed(() => {
     minute: '2-digit',
   }).format(date);
 });
+
+const relativeDate = computed(() => {
+  const date = postDate.value;
+  if (!date) {
+    return '';
+  }
+  const diffMs = Date.now() - date.getTime();
+  if (diffMs < 0 || diffMs >= 24 * 60 * 60 * 1000) {
+    return '';
+  }
+  const rtf = new Intl.RelativeTimeFormat('fr-FR', { numeric: 'auto' });
+  const diffSeconds = Math.floor(diffMs / 1000);
+  if (diffSeconds < 60) {
+    return rtf.format(-diffSeconds, 'second');
+  }
+  const diffMinutes = Math.floor(diffSeconds / 60);
+  if (diffMinutes < 60) {
+    return rtf.format(-diffMinutes, 'minute');
+  }
+  const diffHours = Math.floor(diffMinutes / 60);
+  return rtf.format(-diffHours, 'hour');
+});
+
+const displayDate = computed(() => relativeDate.value || formattedDate.value);
+const dateTooltip = computed(() => (relativeDate.value ? formattedDate.value : ''));
 
 const totalReplies = computed(() => {
   const stack = Array.isArray(props.post.replies) ? [...props.post.replies] : [];
@@ -73,6 +106,14 @@ const router = useRouter();
 const openPost = () => {
   router.push(`/post/${props.post.id}`);
 };
+
+const openReply = () => {
+  router.push({
+    name: 'post',
+    params: { id: props.post.id },
+    query: { reply: '1' },
+  });
+};
 </script>
 
 <template>
@@ -91,6 +132,9 @@ const openPost = () => {
                 @{{ authorHandle }}
               </RouterLink>
             </div>
+            <div v-if="displayDate" class="text-xs text-white/50" :class="relativeDate ? 'tooltip tooltip-top' : ''" :data-tip="relativeDate ? formattedDate : null">
+              {{ displayDate }}
+            </div>
           </div>
 
           <div>
@@ -102,13 +146,12 @@ const openPost = () => {
             </p>
           </div>
 
-          <div @click.stop>
-            <ReactionBar :post="post" :reload="props.reload" />
-          </div>
-          
-          <div v-if="showReplies" class="flex items-center gap-2 text-xs text-white/60">
-            <span class="material-symbols-outlined text-[18px]">chat_bubble</span>
-            <span>{{ totalReplies }}</span>
+          <div class="flex flex-wrap items-center gap-3" @click.stop>
+            <button v-if="showReplies" type="button" class="flex items-center gap-2 text-xs text-white/60 transition-colors hover:text-white" aria-label="Repondre a ce post" @click.stop="openReply">
+              <span class="material-symbols-outlined text-[18px]">chat_bubble</span>
+              <span>{{ totalReplies }}</span>
+            </button>
+            <ReactionBar :post-id="post.id" :reload="props.reload" />
           </div>
         </div>
       </div>

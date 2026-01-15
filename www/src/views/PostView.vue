@@ -99,6 +99,26 @@ const loadPost = async () => {
   }
 };
 
+const isReplyQuery = (value) => {
+  if (Array.isArray(value)) {
+    return value.some(isReplyQuery);
+  }
+  if (value === undefined) {
+    return false;
+  }
+  if (value === null || value === '') {
+    return true;
+  }
+  const normalized = String(value).toLowerCase();
+  return normalized === '1' || normalized === 'true' || normalized === 'yes';
+};
+
+const openReplyFromQuery = () => {
+  if (isReplyQuery(route.query.reply)) {
+    replyModalOpen.value = true;
+  }
+};
+
 const openReply = () => {
   replyModalOpen.value = true;
 };
@@ -107,11 +127,22 @@ const closeReply = () => {
   replyModalOpen.value = false;
 };
 
-onMounted(loadPost);
+onMounted(() => {
+  loadPost();
+  openReplyFromQuery();
+});
 watch(
   () => route.params.id,
   () => {
+    replyModalOpen.value = false;
     loadPost();
+    openReplyFromQuery();
+  }
+);
+watch(
+  () => route.query.reply,
+  () => {
+    openReplyFromQuery();
   }
 );
 </script>
