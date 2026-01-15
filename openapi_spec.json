@@ -125,6 +125,80 @@
         }
       }
     },
+    "/api/user/{username}/posts": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Get posts by user",
+        "operationId": "User_get_posts_by_user_api__string_username__posts_get",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "description": "User ID (username)",
+            "required": true,
+            "schema": {
+              "title": "Username",
+              "type": "string",
+              "description": "User ID (username)"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number",
+            "required": false,
+            "schema": {
+              "title": "Page",
+              "minimum": 1.0,
+              "type": "integer",
+              "description": "Page number",
+              "default": 1
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {
+              "title": "Size",
+              "maximum": 100,
+              "minimum": 1.0,
+              "type": "integer",
+              "description": "Number of items per page",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ValidationErrorModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/user/login": {
       "post": {
         "tags": [
@@ -181,54 +255,11 @@
         }
       }
     },
-    "/api/posts/posts/{post_id}/reactions": {
+    "/api/posts/{post_id}/reactions/{reaction}": {
       "get": {
         "tags": [
           "Post"
         ],
-        "summary": "Get an aggregate of reactions for a post",
-        "description": "this might not be up to date because of the caching system.",
-        "operationId": "Reactions_get_reactions_aggregate__uuid_post_id__reactions_get",
-        "parameters": [
-          {
-            "name": "post_id",
-            "in": "path",
-            "description": "Post ID",
-            "required": true,
-            "schema": {
-              "title": "Post Id",
-              "type": "string",
-              "description": "Post ID",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "422": {
-            "description": "Unprocessable Content",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ValidationErrorModel"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/posts/posts/{post_id}/reactions/{reaction}": {
-      "get": {
-        "tags": [
-          "Post"
-        ],
-        "summary": "Get a count of a specific reaction for a post",
         "operationId": "Reactions_get_reaction__uuid_post_id__reactions__string_reaction__get",
         "parameters": [
           {
@@ -260,9 +291,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
           "422": {
             "description": "Unprocessable Content",
             "content": {
@@ -282,7 +310,6 @@
         "tags": [
           "Post"
         ],
-        "summary": "Add a reaction to a post",
         "operationId": "Reactions_add_reaction_api__uuid_post_id__reactions__string_reaction__post",
         "parameters": [
           {
@@ -314,63 +341,6 @@
           }
         ],
         "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "422": {
-            "description": "Unprocessable Content",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ValidationErrorModel"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Post"
-        ],
-        "summary": "Removes a reaction to a post",
-        "operationId": "Reactions_remove_reaction_api__uuid_post_id__reactions__string_reaction__delete",
-        "parameters": [
-          {
-            "name": "post_id",
-            "in": "path",
-            "description": "Post ID",
-            "required": true,
-            "schema": {
-              "title": "Post Id",
-              "type": "string",
-              "description": "Post ID",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "reaction",
-            "in": "path",
-            "description": "Reaction type",
-            "required": true,
-            "schema": {
-              "title": "Reaction",
-              "maxLength": 1,
-              "minLength": 1,
-              "type": "string",
-              "description": "Reaction type",
-              "example": "\ud83d\udc4d"
-            },
-            "example": "\ud83d\udc4d"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No Content"
-          },
           "422": {
             "description": "Unprocessable Content",
             "content": {
@@ -387,13 +357,12 @@
         }
       }
     },
-    "/api/posts/posts/{post_id}/reactions/{reaction}/bulk": {
+    "/api/posts/{post_id}/reactions/bulk": {
       "delete": {
         "tags": [
           "Post"
         ],
-        "summary": "Removes all reactions of a specific type to a post",
-        "operationId": "Reactions_bulk_remove_reaction__uuid_post_id__reactions__string_reaction__bulk_delete",
+        "operationId": "Reactions_bulk_remove_reaction__uuid_post_id__reactions_bulk_delete",
         "parameters": [
           {
             "name": "post_id",
@@ -406,27 +375,9 @@
               "description": "Post ID",
               "format": "uuid"
             }
-          },
-          {
-            "name": "reaction",
-            "in": "path",
-            "description": "Reaction type",
-            "required": true,
-            "schema": {
-              "title": "Reaction",
-              "maxLength": 1,
-              "minLength": 1,
-              "type": "string",
-              "description": "Reaction type",
-              "example": "\ud83d\udc4d"
-            },
-            "example": "\ud83d\udc4d"
           }
         ],
         "responses": {
-          "204": {
-            "description": "No Content"
-          },
           "422": {
             "description": "Unprocessable Content",
             "content": {
@@ -567,6 +518,19 @@
               "description": "Post ID",
               "format": "uuid"
             }
+          },
+          {
+            "name": "depth",
+            "in": "query",
+            "description": "Depth level for nested resources",
+            "required": false,
+            "schema": {
+              "title": "Depth",
+              "minimum": 0.0,
+              "type": "integer",
+              "description": "Depth level for nested resources",
+              "default": 1
+            }
           }
         ],
         "responses": {
@@ -669,6 +633,87 @@
           }
         }
       },
+      "PostList": {
+        "title": "PostList",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Post"
+        },
+        "description": "List of posts"
+      },
+      "Post": {
+        "title": "Post",
+        "required": [
+          "id",
+          "title",
+          "content",
+          "author",
+          "posted_at"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "type": "string",
+            "description": "Post ID",
+            "format": "uuid",
+            "example": "337818ed-73eb-49d1-86e0-0c1924cbe87a"
+          },
+          "title": {
+            "title": "Title",
+            "maxLength": 50,
+            "type": "string",
+            "description": "Title of the post"
+          },
+          "content": {
+            "title": "Content",
+            "maxLength": 500,
+            "type": "string",
+            "description": "Content of the post"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string",
+            "description": "Creation timestamp of the post",
+            "format": "date-time",
+            "example": "2024-01-01T12:00:00Z"
+          },
+          "author": {
+            "$ref": "#/components/schemas/User",
+            "description": "Author of the post"
+          },
+          "posted_at": {
+            "title": "Posted At",
+            "type": "string",
+            "description": "Post creation date"
+          },
+          "response_to": {
+            "title": "Response To",
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "ID of the post this is responding to",
+            "format": "uuid",
+            "default": null,
+            "example": "d0c51b40-57ea-4d8e-99f6-e833ed63ce0f"
+          },
+          "replies": {
+            "title": "Replies",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Post"
+            },
+            "description": "List of replies to this post"
+          }
+        }
+      },
       "UserSignUp": {
         "title": "UserSignUp",
         "required": [
@@ -730,74 +775,6 @@
           }
         }
       },
-      "PostList": {
-        "title": "PostList",
-        "type": "array",
-        "items": {
-          "$ref": "#/components/schemas/Post"
-        },
-        "description": "List of posts"
-      },
-      "Post": {
-        "title": "Post",
-        "required": [
-          "id",
-          "title",
-          "content",
-          "author"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "title": "Id",
-            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
-            "type": "string",
-            "description": "Post ID",
-            "format": "uuid",
-            "example": "c4b8a755-17fb-4c4e-862a-5248329170f4"
-          },
-          "title": {
-            "title": "Title",
-            "maxLength": 50,
-            "type": "string",
-            "description": "Title of the post"
-          },
-          "content": {
-            "title": "Content",
-            "maxLength": 500,
-            "type": "string",
-            "description": "Content of the post"
-          },
-          "author": {
-            "$ref": "#/components/schemas/User",
-            "description": "Author of the post"
-          },
-          "response_to": {
-            "title": "Response To",
-            "anyOf": [
-              {
-                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "ID of the post this is responding to",
-            "format": "uuid",
-            "default": null,
-            "example": "27fb660b-7625-485d-afe9-243e6a41a4dc"
-          },
-          "replies": {
-            "title": "Replies",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Post"
-            },
-            "description": "List of replies to this post"
-          }
-        }
-      },
       "PostSubmit": {
         "title": "PostSubmit",
         "required": [
@@ -832,7 +809,7 @@
             "description": "ID of the post this is responding to",
             "format": "uuid",
             "default": null,
-            "example": "7befe0fe-832a-4f28-a2f5-902b75c0d652"
+            "example": "29abeafe-70b9-48f2-9753-777951a171d6"
           }
         }
       },
