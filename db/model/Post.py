@@ -58,12 +58,12 @@ class Post(db.Model):
         parents = []
         current = self.parent
         while current:
-            parents.append(current.to_structure())
+            parents.append(current.to_structure(fill_parents=False))
             current = current.parent
         parents.reverse()
         return parents
 
-    def to_structure(self, depth=0) -> "structures.Post":
+    def to_structure(self, depth=0, fill_parents=True) -> "structures.Post":
         return structures.Post(
             id=str(self.id),
             title=self.title,
@@ -87,6 +87,6 @@ class Post(db.Model):
                     .all()
                 }
             ),
-            replies_count=len(self.replies),
-            parents=self._get_parents(),
+            replies_count=Post.query.filter_by(reply_to=self.id).count(),
+            parents=self._get_parents() if fill_parents else [],
         )

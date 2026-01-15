@@ -8,10 +8,6 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-  showReplies: {
-    type: Boolean,
-    default: true,
-  },
   reload: {
     type: Function,
     required: true,
@@ -128,7 +124,6 @@ const openReply = () => {
               </RouterLink>
             </div>
             <div
-              v-if="displayDate"
               class="text-xs text-white/50"
               :class="relativeDate ? 'tooltip tooltip-top' : ''"
               :data-tip="relativeDate ? formattedDate : null"
@@ -152,7 +147,6 @@ const openReply = () => {
 
           <div class="flex flex-wrap items-center gap-3" @click.stop>
             <button
-              v-if="showReplies"
               type="button"
               class="flex items-center gap-2 text-xs text-white/60 transition-colors hover:text-white"
               aria-label="Repondre a ce post"

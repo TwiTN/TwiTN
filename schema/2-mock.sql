@@ -35,8 +35,8 @@ WITH RECURSIVE posts_recursive AS (
         pr.author AS author,
         pr.depth + 1 AS depth
     FROM posts_recursive pr
-    CROSS JOIN (VALUES (1),(2)) AS b(branch_index)
-    WHERE pr.depth < 10
+    CROSS JOIN (VALUES (1), (2)) AS b(branch_index)
+    WHERE pr.depth < 11
 )
 INSERT INTO public.posts (id, title, body, author, reply_to, posted_at)
 SELECT id, title, body, author, reply_to, now()

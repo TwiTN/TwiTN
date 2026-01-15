@@ -40,14 +40,13 @@ def get_posts(query: structures.Paging) -> structures.PostList:
     responses={200: structures.Post},
     summary="Get post by ID",
 )
-def get_post_by_id(path: structures.PostId, query: structures.Depth) -> structures.Post:
+def get_post_by_id(path: structures.PostId) -> structures.Post:
     post: Post = Post.query.get(path.post_id)
 
     if post is None:
         return make_error(404, "Post not found")
 
-    return post.to_structure(depth=query.depth).to_dict()
-
+    return post.to_structure(depth=1).to_dict()
 
 @api.post(
     "/",
