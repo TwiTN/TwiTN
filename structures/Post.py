@@ -32,11 +32,10 @@ class Post(BaseModel):
     )
 
     created_at: datetime = Field(
-    default_factory=datetime.utcnow,
-    description="Creation timestamp of the post",
-    example="2024-01-01T12:00:00Z",
-)
-
+        default_factory=datetime.utcnow,
+        description="Creation timestamp of the post",
+        example="2024-01-01T12:00:00Z",
+    )
 
     author: User = Field(
         ...,

@@ -47,12 +47,11 @@ def get_user_by_id(path: UserId):
 )
 def create_user(body: UserSignUp):
     user = add_user(
-    body.username,
-    body.display_name,
-    body.email,
-    hash_password(body.password),
+        body.username,
+        body.display_name,
+        body.email,
+        hash_password(body.password),
     )
-
 
     if user is None:
         return make_error(409, "User already exists")
@@ -69,7 +68,6 @@ def login_user(body: UserLogin):
     user = get_user(body.username)
     if user is None or not verify_password(body.password, user.password):
         return make_error(401, "Invalid credentials")
-
 
     session["user_id"] = body.username
 

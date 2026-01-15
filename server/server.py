@@ -26,16 +26,18 @@ app = OpenAPI(
     info=info,
     security_schemes=security_schemas,
     static_folder="../www/dist",
-    static_url_path="/"
+    static_url_path="/",
 )
 app.url_map.converters["uuid"] = UUIDConverter
 app.config.from_object(__name__)
 
 session = Session()
 
+
 @app.endpoint("catch_all")
 def _404(_404):
     return send_file("../www/dist/index.html")
+
 
 app.url_map.add(Rule("/", defaults={"_404": ""}, endpoint="catch_all"))
 app.url_map.add(Rule("/<path:_404>", endpoint="catch_all"))
@@ -44,16 +46,7 @@ app.register_api(api)
 db.init_app(app)
 session.init_app(app)
 
-    
-from flask import send_from_directory
-
-@app.route('/reports/<path:path>')
-def send_report(path):
-    # Using request args for path will expose you to directory traversal attacks
-    return send_from_directory('www/dist', path)
-
 def create_app():
-
     with app.app_context():
         db.create_all()
 
