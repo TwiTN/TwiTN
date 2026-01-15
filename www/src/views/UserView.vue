@@ -17,10 +17,10 @@ const loadPosts = async (username) => {
   postsError.value = '';
   posts.value = [];
   try {
-    const res = await apiFetch('/api/posts/');
+    const res = await apiFetch(`/api/user/${username}/posts`);
     if (res.ok) {
       const allPosts = await res.json();
-      posts.value = allPosts.filter((post) => post.author?.username === username);
+      posts.value = allPosts;
       return;
     }
     postsError.value = (await readError(res)) || 'Erreur lors du chargement des tweets.';

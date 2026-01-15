@@ -48,7 +48,6 @@ def get_post_by_id(path: PostId, query: Depth) -> Post:
 
     return post.to_structure(depth=query.depth).to_dict()
 
-
 @api.post(
     "/",
     tags=[post_tag],

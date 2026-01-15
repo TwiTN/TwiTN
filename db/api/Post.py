@@ -14,6 +14,15 @@ def create_post(title, body, author, posted_at, reply_to=None) -> Post:
     db.session.commit()
     return post
 
+def get_posts_by_user(username, limit=20, offset=0) -> list[Post]:
+    return (
+        db.session.query(Post)
+        .filter(Post.author == username)
+        .order_by(Post.posted_at.desc())
+        .limit(limit)
+        .offset(offset)
+        .all()
+    )
 
 def get_post(post_id):
     return (
