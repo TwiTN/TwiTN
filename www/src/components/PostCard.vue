@@ -12,6 +12,10 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  reload: {
+    type: Function,
+    required: true,
+  },
 });
 
 const authorName = computed(() => {
@@ -80,6 +84,9 @@ const openPost = () => {
           <div class="flex items-center justify-between">
             <div>
               <div class="text-sm font-semibold text-white">{{ authorName }}</div>
+              <div v-if="post.response_to" class="text-xs text-white/60">
+                Réponse à <span class="font-mono">@{{ post.response_to || 'unknown' }}</span>
+              </div>
               <RouterLink :to="`/user/${authorHandle}`" class="text-xs text-white/60 hover:text-white/80" @click.stop>
                 @{{ authorHandle }}
               </RouterLink>
@@ -96,7 +103,7 @@ const openPost = () => {
           </div>
 
           <div @click.stop>
-            <ReactionBar :post-id="post.id" />
+            <ReactionBar :post="post" :reload="props.reload" />
           </div>
           
           <div v-if="showReplies" class="flex items-center gap-2 text-xs text-white/60">

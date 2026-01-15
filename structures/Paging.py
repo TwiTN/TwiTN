@@ -6,5 +6,5 @@ class Paging(BaseModel):
     size: int = Field(10, description="Number of items per page", ge=1, le=100)
 
 
-class DepthPaging(Paging):
-    depth: int = Field(0, description="Depth level for nested resources", ge=0)
+class Depth(BaseModel):
+    depth: int = Field(1, description="Depth level for nested resources", ge=0)

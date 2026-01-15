@@ -1,3 +1,4 @@
+import os
 from flask_openapi3 import OpenAPI, Info
 from werkzeug.routing import Rule
 from flask import send_file
@@ -25,7 +26,7 @@ app = OpenAPI(
     __name__,
     info=info,
     security_schemes=security_schemas,
-    static_folder="../www/dist",
+    static_folder=os.path.join(os.path.dirname(__file__), "../www/dist"),
     static_url_path="/",
 )
 app.url_map.converters["uuid"] = UUIDConverter
@@ -34,17 +35,17 @@ app.config.from_object(__name__)
 session = Session()
 
 
-@app.endpoint("catch_all")
-def _404(_404):
-    return send_file("../www/dist/index.html")
+@app.errorhandler(404)
+def page_not_found(e):
+    # On utilise un chemin absolu pour éviter les erreurs de dossier courant
+    path_to_index = os.path.join(app.root_path, "../www/dist/index.html")
+    return send_file(path_to_index)
 
-
-app.url_map.add(Rule("/", defaults={"_404": ""}, endpoint="catch_all"))
-app.url_map.add(Rule("/<path:_404>", endpoint="catch_all"))
 
 app.register_api(api)
 db.init_app(app)
 session.init_app(app)
+
 
 def create_app():
     with app.app_context():

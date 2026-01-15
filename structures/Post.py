@@ -8,6 +8,7 @@ from pydantic import BaseModel, RootModel, Field
 
 from structures.User import User
 from lib import UUID_RE
+from db.api.Reaction import get_reactions_summary
 
 
 class Post(BaseModel):
@@ -63,6 +64,7 @@ class Post(BaseModel):
             "author": self.author.to_dict(),
             "response_to": self.response_to,
             "replies": [reply.to_dict() for reply in self.replies],
+            "reactions": get_reactions_summary(self.id),
         }
 
 
@@ -121,12 +123,7 @@ class PostId(BaseModel):
         description="Post ID",
     )
 
-
-class PostIdWithReaction(BaseModel):
-    post_id: uuid.UUID = Field(
-        ...,
-        description="Post ID",
-    )
+class PostIdWithReaction(PostId):
     reaction: str = Field(
         ...,
         description="Reaction type",

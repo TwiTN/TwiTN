@@ -9,19 +9,12 @@ from db.api.Reaction import (
     add_reaction,
     remove_reaction,
     clear_reactions_for_post,
-    get_reactions_summary,
     get_reaction_count,
+    reaction_exists,
 )
 
 
 api = APIBlueprint("Reactions", __name__)
-
-
-@api.get("/<uuid:post_id>/reactions", tags=[post_tag])
-def get_reactions_aggregate(path: PostId):
-    if get_post(path.post_id) is None:
-        return make_error(404, "Post not found")
-    return get_reactions_summary(path.post_id)
 
 
 @api.get("/<uuid:post_id>/reactions/<string:reaction>", tags=[post_tag])
@@ -40,18 +33,12 @@ def add_reaction_api(path: PostIdWithReaction):
     if user is None:
         return make_error(404, "User not found")
 
-    add_reaction(str(path.post_id), user.username, path.reaction)
-    return make_error(201, "Reaction added")
-
-
-@api.delete("/<uuid:post_id>/reactions/<string:reaction>", tags=[post_tag])
-def remove_reaction_api(path: PostIdWithReaction):
-    if "user_id" not in session:
-        return make_error(401, "Unauthorized")
-    removed = remove_reaction(str(path.post_id), session["user_id"], path.reaction)
-    if not removed:
-        return make_error(404, "Reaction not found")
-    return make_error(204, "Reaction removed")
+    if reaction_exists(str(path.post_id), session["user_id"], path.reaction):
+        remove_reaction(str(path.post_id), session["user_id"], path.reaction)
+        return make_error(200, "Reaction removed")
+    else:
+        add_reaction(str(path.post_id), user.username, path.reaction)
+        return make_error(201, "Reaction added")
 
 
 @api.delete("/<uuid:post_id>/reactions/bulk", tags=[post_tag])

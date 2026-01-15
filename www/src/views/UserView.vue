@@ -92,7 +92,7 @@ watch(
           Aucun tweet pour le moment.
         </div>
         <div v-else class="space-y-4">
-          <PostCard v-for="post in posts" :key="post.id" :post="post" />
+          <PostCard v-for="post in posts" :key="post.id" :post="post" :reload="loadPosts" />
         </div>
       </div>
     </div>

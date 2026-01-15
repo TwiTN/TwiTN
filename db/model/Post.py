@@ -52,14 +52,14 @@ class Post(db.Model):
         lazy=True,
     )
 
-    def to_structure(self) -> "structures.Post":
-        from structures.Post import Post as PostStructure
-
-        return PostStructure(
+    def to_structure(self, depth=0) -> "structures.Post":
+        return structures.Post(
             id=str(self.id),
             title=self.title,
             content=self.body,
             author=self.author_fk.to_structure() if self.author_fk else None,
             response_to=str(self.reply_to) if self.reply_to else None,
-            replies=[reply.to_structure() for reply in self.replies],
+            replies=[reply.to_structure(depth=depth - 1) for reply in self.replies]
+            if depth > 0
+            else [],
         )

@@ -3,13 +3,16 @@ import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { apiFetch, readError } from '../api/client';
 
 const props = defineProps({
-  postId: {
-    type: String,
+  post: {
+    type: Object,
+    required: true,
+  },
+  reload: {
+    type: Function,
     required: true,
   },
 });
 
-const counts = ref({});
 const error = ref('');
 const loading = ref(false);
 const customEmoji = ref('');
@@ -38,13 +41,13 @@ const emojiRegex = /\p{Extended_Pictographic}/u;
 const visibleReactions = computed(() => {
   const items = [];
   defaultReactions.forEach((reaction) => {
-    const count = counts.value[reaction.emoji];
+    const count = props.post.reactions?.[reaction.emoji];
     if (count) {
       items.push({ ...reaction, count });
     }
   });
 
-  Object.entries(counts.value || {}).forEach(([emoji, count]) => {
+  Object.entries(props.post.reactions || {}).forEach(([emoji, count]) => {
     if (!count || defaultEmojiSet.has(emoji)) {
       return;
     }
@@ -54,26 +57,13 @@ const visibleReactions = computed(() => {
   return items;
 });
 
-const loadCounts = async () => {
-  try {
-    const res = await apiFetch(`/api/posts/${props.postId}/reactions`);
-    if (res.ok) {
-      counts.value = await res.json();
-      return;
-    }
-    error.value = (await readError(res)) || 'Erreur lors du chargement des réactions.';
-  } catch (err) {
-    error.value = 'Erreur réseau.';
-  }
-};
-
 const react = async (reaction) => {
   error.value = '';
   loading.value = true;
   try {
     const normalized = reaction.trim();
     const encoded = encodeURIComponent(normalized);
-    const res = await apiFetch(`/api/posts/${props.postId}/reactions/${encoded}`, {
+    const res = await apiFetch(`/api/posts/${props.post.id}/reactions/${encoded}`, {
       method: 'POST',
     });
     if (res.status === 401) {
@@ -84,7 +74,9 @@ const react = async (reaction) => {
       error.value = (await readError(res)) || 'Action impossible.';
       return;
     }
-    await loadCounts();
+
+    // reload
+    await props.reload();
   } catch (err) {
     error.value = 'Erreur réseau.';
   } finally {
@@ -122,8 +114,6 @@ const handleCustomInput = () => {
     customError.value = '';
   }
 };
-
-onMounted(loadCounts);
 
 const handleDocumentClick = (event) => {
   if (!dropdownRef.value) {

@@ -11,7 +11,6 @@ const loading = ref(true);
 const error = ref('');
 
 const { currentUser } = useAuth();
-const feedPosts = computed(() => posts.value.filter((post) => post.response_to == null));
 const postModalOpen = ref(false);
 
 const loadPosts = async () => {
@@ -77,11 +76,11 @@ const handlePosted = () => {
 
     <div v-if="loading" class="text-white/70">Chargement...</div>
     <div v-else-if="error" class="text-amber-300">{{ error }}</div>
-    <div v-else-if="feedPosts.length === 0" class="text-white/70">
+    <div v-else-if="posts.length === 0" class="text-white/70">
       Aucun post pour le moment.
     </div>
     <div v-else class="space-y-4">
-      <PostCard v-for="post in feedPosts" :key="post.id" :post="post" />
+      <PostCard v-for="post in posts" :key="post.id" :post="post" :reload="loadPosts" />
     </div>
 
     <button v-if="currentUser" type="button" class="btn btn-circle bg-white text-black hover:bg-white/80 fixed bottom-6 left-6 shadow-xl z-20 w-16 h-16 text-3xl" aria-label="Nouveau post" @click="openNewPost">

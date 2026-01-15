@@ -49,7 +49,7 @@ const parentThread = computed(() => {
 });
 
 const fetchPostById = async (postId) => {
-  const res = await apiFetch(`/api/posts/${postId}`);
+  const res = await apiFetch(`/api/posts/${postId}?depth=0`);
   if (!res.ok) {
     return null;
   }
@@ -85,7 +85,7 @@ const loadPost = async () => {
   post.value = null;
   parentChain.value = [];
   try {
-    const res = await apiFetch(`/api/posts/${route.params.id}`);
+    const res = await apiFetch(`/api/posts/${route.params.id}?depth=1`);
     if (res.ok) {
       post.value = await res.json();
       await loadParentChain(post.value);
@@ -142,14 +142,14 @@ watch(
               <span>Tweet d'origine</span>
             </div>
             <div class="pl-4 border-l border-white/10" :style="{ marginLeft: `${item.depth * 16}px` }">
-              <PostCard :post="item.post" :show-replies="false" />
+              <PostCard :post="item.post" :show-replies="false" :reload="loadPost" />
             </div>
           </div>
         </div>
         <div class="border-t border-white/10"></div>
       </div>
 
-      <PostCard v-else :post="post" :show-replies="false" />
+      <PostCard v-else :post="post" :show-replies="false" :reload="loadPost" />
 
       <div class="flex items-center gap-3">
         <button v-if="currentUser" type="button" class="btn btn-sm btn-outline border-white/30 text-white/80 hover:bg-white hover:text-black" @click="openReply">
@@ -177,7 +177,7 @@ watch(
               <span v-else class="text-white/50">tweet</span>
             </div>
             <div class="pl-4 border-l border-white/10" :style="{ marginLeft: `${item.depth * 16}px` }">
-              <PostCard :post="item.reply" :show-replies="false" />
+              <PostCard :post="item.reply" :show-replies="false" :reload="loadPost" />
             </div>
           </div>
         </div>

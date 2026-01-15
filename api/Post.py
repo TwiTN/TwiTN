@@ -1,6 +1,6 @@
 from lib.make_error import make_error
 from flask_openapi3 import APIBlueprint
-from structures import Post, PostList, PostSubmit, Paging, PostId
+from structures import Post, PostList, PostSubmit, Paging, PostId, Depth
 from .Reactions import api as reactions_api
 from .tags import post_tag
 import datetime
@@ -40,13 +40,13 @@ def get_posts(query: Paging) -> PostList:
     responses={200: Post},
     summary="Get post by ID",
 )
-def get_post_by_id(path: PostId) -> Post:
+def get_post_by_id(path: PostId, query: Depth) -> Post:
     post = get_post(path.post_id)
 
     if post is None:
         return make_error(404, "Post not found")
 
-    return post.to_structure().to_dict()
+    return post.to_structure(depth=query.depth).to_dict()
 
 
 @api.post(

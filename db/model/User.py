@@ -38,9 +38,7 @@ class User(db.Model):
     )
 
     def to_structure(self) -> "structures.User":
-        from structures import User as UserStructure
-
-        return UserStructure(
+        return structures.User(
             username=self.username,
             display_name=self.display_name,
             email=self.email,
