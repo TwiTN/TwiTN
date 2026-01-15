@@ -4,15 +4,22 @@ services:
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
     volumes:
-      - ./schema.sql:/docker-entrypoint-initdb.d/1schema.sql:z
-      - ./mock.sql:/docker-entrypoint-initdb.d/2mock.sql:z
-      - ./functions.sql:/docker-entrypoint-initdb.d/2functions.sql:z
+      - ./schema:/docker-entrypoint-initdb.d:z
     ports:
       - "5432:5432"
+    env_file:
+      - .env
   
   back:
-    build: back
+    restart: always
+    build: 
+      context: .
+      dockerfile: Containerfile
     ports:
       - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
 
-volumes:
+

@@ -1,0 +1,54 @@
+from sqlalchemy import String
+from db import db
+import structures
+import bcrypt
+
+
+class User(db.Model):
+    __tablename__ = "users"
+
+    username: str = db.Column(
+        String(20),
+        unique=True,
+        index=True,
+        nullable=False,
+        primary_key=True,
+    )
+
+    display_name: str = db.Column(
+        String(50),
+        nullable=False,
+    )
+
+    email: str = db.Column(
+        String(100),
+        unique=True,
+        index=True,
+        nullable=False,
+    )
+
+    password: str = db.Column(
+        String(128),
+        nullable=False,
+    )
+
+    posts = db.relationship(
+        "Post",
+        cascade="delete-orphan, all",
+        backref="author_fk",
+    )
+
+    def update_password(self, password: str):
+        self.password = bcrypt.hashpw(
+            password.encode("utf-8"), bcrypt.gensalt()
+        ).decode("utf-8")
+
+    def verify_password(self, password: str) -> bool:
+        return bcrypt.checkpw(password.encode("utf-8"), self.password.encode("utf-8"))
+
+    def to_structure(self) -> "structures.User":
+        return structures.User(
+            username=self.username,
+            display_name=self.display_name,
+            email=self.email,
+        )

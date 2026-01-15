@@ -1,0 +1,894 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Twi'TN API",
+    "description": "Api for Twi'TN application",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/user/": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Get current user",
+        "operationId": "User_get_current_user__get",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "User_create_user__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserSignUp"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ValidationErrorModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "User_delete_current_user__delete",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/user/{username}": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "User_get_user_by_id__string_username__get",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "description": "User ID (username)",
+            "required": true,
+            "schema": {
+              "title": "Username",
+              "type": "string",
+              "description": "User ID (username)"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ValidationErrorModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{username}/posts": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Get posts by user",
+        "operationId": "User_get_posts_by_user_api__string_username__posts_get",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "description": "User ID (username)",
+            "required": true,
+            "schema": {
+              "title": "Username",
+              "type": "string",
+              "description": "User ID (username)"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number",
+            "required": false,
+            "schema": {
+              "title": "Page",
+              "minimum": 1.0,
+              "type": "integer",
+              "description": "Page number",
+              "default": 1
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {
+              "title": "Size",
+              "maximum": 100,
+              "minimum": 1.0,
+              "type": "integer",
+              "description": "Number of items per page",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ValidationErrorModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/login": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "User_login_user_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLogin"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ValidationErrorModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/logout": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "User_logout_user_logout_post",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/posts/{post_id}/reactions/{reaction}": {
+      "get": {
+        "tags": [
+          "Post"
+        ],
+        "operationId": "Reactions_get_reaction__uuid_post_id__reactions__string_reaction__get",
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "path",
+            "description": "Post ID",
+            "required": true,
+            "schema": {
+              "title": "Post Id",
+              "type": "string",
+              "description": "Post ID",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "reaction",
+            "in": "path",
+            "description": "Reaction type",
+            "required": true,
+            "schema": {
+              "title": "Reaction",
+              "maxLength": 1,
+              "minLength": 1,
+              "type": "string",
+              "description": "Reaction type",
+              "example": "\ud83d\udc4d"
+            },
+            "example": "\ud83d\udc4d"
+          }
+        ],
+        "responses": {
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ValidationErrorModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Post"
+        ],
+        "operationId": "Reactions_add_reaction_api__uuid_post_id__reactions__string_reaction__post",
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "path",
+            "description": "Post ID",
+            "required": true,
+            "schema": {
+              "title": "Post Id",
+              "type": "string",
+              "description": "Post ID",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "reaction",
+            "in": "path",
+            "description": "Reaction type",
+            "required": true,
+            "schema": {
+              "title": "Reaction",
+              "maxLength": 1,
+              "minLength": 1,
+              "type": "string",
+              "description": "Reaction type",
+              "example": "\ud83d\udc4d"
+            },
+            "example": "\ud83d\udc4d"
+          }
+        ],
+        "responses": {
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ValidationErrorModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/posts/{post_id}/reactions/bulk": {
+      "delete": {
+        "tags": [
+          "Post"
+        ],
+        "operationId": "Reactions_bulk_remove_reaction__uuid_post_id__reactions_bulk_delete",
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "path",
+            "description": "Post ID",
+            "required": true,
+            "schema": {
+              "title": "Post Id",
+              "type": "string",
+              "description": "Post ID",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ValidationErrorModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/posts/": {
+      "get": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "Get a list of posts",
+        "operationId": "Post_get_posts__get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number",
+            "required": false,
+            "schema": {
+              "title": "Page",
+              "minimum": 1.0,
+              "type": "integer",
+              "description": "Page number",
+              "default": 1
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "schema": {
+              "title": "Size",
+              "maximum": 100,
+              "minimum": 1.0,
+              "type": "integer",
+              "description": "Number of items per page",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostList"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ValidationErrorModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "Create a new post",
+        "operationId": "Post_create_post__post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostSubmit"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ValidationErrorModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/posts/{post_id}": {
+      "get": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "Get post by ID",
+        "operationId": "Post_get_post_by_id__uuid_post_id__get",
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "path",
+            "description": "Post ID",
+            "required": true,
+            "schema": {
+              "title": "Post Id",
+              "type": "string",
+              "description": "Post ID",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "depth",
+            "in": "query",
+            "description": "Depth level for nested resources",
+            "required": false,
+            "schema": {
+              "title": "Depth",
+              "minimum": 0.0,
+              "type": "integer",
+              "description": "Depth level for nested resources",
+              "default": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ValidationErrorModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Post"
+        ],
+        "summary": "Delete a post",
+        "operationId": "Post_delete_post__uuid_post_id__delete",
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "path",
+            "description": "Post ID",
+            "required": true,
+            "schema": {
+              "title": "Post Id",
+              "type": "string",
+              "description": "Post ID",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ValidationErrorModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "title": "User",
+        "required": [
+          "username",
+          "display_name",
+          "email"
+        ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "title": "Username",
+            "maxLength": 20,
+            "minLength": 5,
+            "type": "string",
+            "description": "Unique identifier for the user"
+          },
+          "display_name": {
+            "title": "Display Name",
+            "maxLength": 50,
+            "type": "string",
+            "description": "Name displayed on the user's profile"
+          },
+          "email": {
+            "title": "Email",
+            "maxLength": 100,
+            "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+            "type": "string",
+            "description": "User's email address"
+          }
+        }
+      },
+      "PostList": {
+        "title": "PostList",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Post"
+        },
+        "description": "List of posts"
+      },
+      "Post": {
+        "title": "Post",
+        "required": [
+          "id",
+          "title",
+          "content",
+          "author",
+          "posted_at"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "title": "Id",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+            "type": "string",
+            "description": "Post ID",
+            "format": "uuid",
+            "example": "337818ed-73eb-49d1-86e0-0c1924cbe87a"
+          },
+          "title": {
+            "title": "Title",
+            "maxLength": 50,
+            "type": "string",
+            "description": "Title of the post"
+          },
+          "content": {
+            "title": "Content",
+            "maxLength": 500,
+            "type": "string",
+            "description": "Content of the post"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string",
+            "description": "Creation timestamp of the post",
+            "format": "date-time",
+            "example": "2024-01-01T12:00:00Z"
+          },
+          "author": {
+            "$ref": "#/components/schemas/User",
+            "description": "Author of the post"
+          },
+          "posted_at": {
+            "title": "Posted At",
+            "type": "string",
+            "description": "Post creation date"
+          },
+          "response_to": {
+            "title": "Response To",
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "ID of the post this is responding to",
+            "format": "uuid",
+            "default": null,
+            "example": "d0c51b40-57ea-4d8e-99f6-e833ed63ce0f"
+          },
+          "replies": {
+            "title": "Replies",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Post"
+            },
+            "description": "List of replies to this post"
+          }
+        }
+      },
+      "UserSignUp": {
+        "title": "UserSignUp",
+        "required": [
+          "username",
+          "display_name",
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "title": "Username",
+            "maxLength": 20,
+            "minLength": 5,
+            "type": "string",
+            "description": "Unique identifier for the user"
+          },
+          "display_name": {
+            "title": "Display Name",
+            "maxLength": 50,
+            "type": "string",
+            "description": "Name displayed on the user's profile"
+          },
+          "email": {
+            "title": "Email",
+            "maxLength": 100,
+            "pattern": "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+            "type": "string",
+            "description": "User's email address"
+          },
+          "password": {
+            "title": "Password",
+            "minLength": 8,
+            "type": "string",
+            "description": "Password for user authentication"
+          }
+        }
+      },
+      "UserLogin": {
+        "title": "UserLogin",
+        "required": [
+          "username",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "title": "Username",
+            "maxLength": 20,
+            "minLength": 5,
+            "type": "string",
+            "description": "Unique identifier for the user"
+          },
+          "password": {
+            "title": "Password",
+            "minLength": 8,
+            "type": "string",
+            "description": "Password for user authentication"
+          }
+        }
+      },
+      "PostSubmit": {
+        "title": "PostSubmit",
+        "required": [
+          "title",
+          "body"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "title": "Title",
+            "maxLength": 50,
+            "type": "string",
+            "description": "Title of the post"
+          },
+          "body": {
+            "title": "Body",
+            "maxLength": 500,
+            "type": "string",
+            "description": "Content of the post"
+          },
+          "reply_to": {
+            "title": "Reply To",
+            "anyOf": [
+              {
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "ID of the post this is responding to",
+            "format": "uuid",
+            "default": null,
+            "example": "29abeafe-70b9-48f2-9753-777951a171d6"
+          }
+        }
+      },
+      "ValidationErrorModel": {
+        "title": "ValidationErrorModel",
+        "required": [
+          "type",
+          "loc",
+          "msg",
+          "input"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "title": "Error Type",
+            "type": "string",
+            "description": "A computer-readable identifier of the error type."
+          },
+          "loc": {
+            "title": "Location",
+            "type": "array",
+            "items": {},
+            "description": "The error's location as a list."
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string",
+            "description": "A human readable explanation of the error."
+          },
+          "input": {
+            "title": "Input",
+            "description": "The input provided for validation."
+          },
+          "url": {
+            "title": "URL",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The URL to further information about the error.",
+            "default": null
+          },
+          "ctx": {
+            "title": "Error context",
+            "anyOf": [
+              {
+                "type": "object",
+                "additionalProperties": true
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "An optional object which contains values required to render the error message.",
+            "default": null
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "api_key": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "session_id"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "User",
+      "description": "Operations related to users"
+    },
+    {
+      "name": "Post",
+      "description": "Operations related to posts"
+    }
+  ]
+}
