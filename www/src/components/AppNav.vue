@@ -20,7 +20,7 @@ const handleLogout = async () => {
       </RouterLink>
     </div>
     <div v-if="isLoggedIn" class="flex-none gap-2 items-center">
-      <RouterLink :to="`/user/${currentUser.username}`" class="btn btn-ghost normal-case text-left px-3">
+      <RouterLink :to="`/user/${currentUser.username}`" class="btn btn-ghost normal-case text-left px-3 mr-2">
         <img src="/res/user-200.png" alt="User" class="w-8 h-8 rounded-full" />
         <div class="ml-2">
           <div class="text-xs text-white/60">@{{ currentUser.username }}</div>
@@ -34,7 +34,7 @@ const handleLogout = async () => {
       </button>
     </div>
     <div v-else class="flex-none gap-2">
-      <RouterLink to="/login" class="btn btn-outline border-white/40 text-white hover:bg-white hover:text-black">
+      <RouterLink to="/login" class="btn btn-outline border-white/40 text-white hover:bg-white hover:text-black mr-2">
         Connexion
       </RouterLink>
       <RouterLink to="/signup" class="btn bg-white text-black hover:bg-white/80">
