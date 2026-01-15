@@ -18,7 +18,7 @@ const dropdownRef = ref(null);
 
 // Keep reactions to a single code point to match the API max_length=1.
 const baseReactions = [
-  { codepoint: 0x2764, label: 'Coeur' },
+  { codepoint: 0x2764, label: 'Coeur', emojiPresentation: true },
   { codepoint: 0x1f44d, label: 'Pouce' },
   { codepoint: 0x1f602, label: 'Rire' },
   { codepoint: 0x1f62e, label: 'Choc' },
@@ -26,10 +26,11 @@ const baseReactions = [
   { codepoint: 0x1f525, label: 'Flamme' },
 ];
 
-const defaultReactions = baseReactions.map((reaction) => ({
-  emoji: String.fromCodePoint(reaction.codepoint),
-  label: reaction.label,
-}));
+const defaultReactions = baseReactions.map((reaction) => {
+  const emoji = String.fromCodePoint(reaction.codepoint);
+  const display = reaction.emojiPresentation ? String.fromCodePoint(reaction.codepoint, 0xfe0f): emoji;
+  return { emoji, display, label: reaction.label };
+});
 
 const defaultEmojiSet = new Set(defaultReactions.map((reaction) => reaction.emoji));
 const emojiRegex = /\p{Extended_Pictographic}/u;
@@ -47,7 +48,7 @@ const visibleReactions = computed(() => {
     if (!count || defaultEmojiSet.has(emoji)) {
       return;
     }
-    items.push({ emoji, label: 'Réaction', count });
+    items.push({ emoji, display: emoji, label: 'Réaction', count });
   });
 
   return items;
@@ -147,7 +148,7 @@ onUnmounted(() => {
     <div v-if="visibleReactions.length" class="flex flex-wrap items-center gap-2">
       <div v-for="reaction in visibleReactions" :key="reaction.emoji" class="tooltip tooltip-top" :data-tip="reaction.label">
         <button class="btn btn-ghost btn-sm text-white/80 hover:text-white" :disabled="loading" @click="react(reaction.emoji)">
-          <span class="text-lg">{{ reaction.emoji }}</span>
+          <span class="text-lg">{{ reaction.display }}</span>
           <span class="text-xs text-white/60">{{ reaction.count }}</span>
         </button>
       </div>
@@ -161,7 +162,7 @@ onUnmounted(() => {
         <div class="text-xs text-white/60 mb-2">Réagir avec</div>
         <div class="grid grid-cols-6 gap-2 mb-3">
           <button v-for="reaction in defaultReactions" :key="reaction.emoji" class="btn btn-ghost btn-xs" :disabled="loading" @click="react(reaction.emoji)">
-            <span class="text-lg">{{ reaction.emoji }}</span>
+            <span class="text-lg">{{ reaction.display }}</span>
           </button>
         </div>
         <div class="text-xs text-white/60 mb-1">Emoji personnalisé</div>
