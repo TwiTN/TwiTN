@@ -23,7 +23,7 @@ def get_post(post_id):
 def list_posts(limit=20, offset=0) -> list[Post]:
     return (
         db.session.query(Post)
-        .order_by(Post.posted_at)
+        .order_by(Post.posted_at.desc())
         .limit(limit)
         .offset(offset)
         .all()
