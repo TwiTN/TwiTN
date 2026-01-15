@@ -85,29 +85,6 @@ const relativeDate = computed(() => {
 });
 
 const displayDate = computed(() => relativeDate.value || formattedDate.value);
-const dateTooltip = computed(() =>
-  relativeDate.value ? formattedDate.value : "",
-);
-
-const totalReplies = computed(() => {
-  const stack = Array.isArray(props.post.replies)
-    ? [...props.post.replies]
-    : [];
-  let count = 0;
-
-  while (stack.length > 0) {
-    const current = stack.pop();
-    if (!current) {
-      continue;
-    }
-    count += 1;
-    if (Array.isArray(current.replies) && current.replies.length > 0) {
-      stack.push(...current.replies);
-    }
-  }
-
-  return count;
-});
 
 const router = useRouter();
 
@@ -141,12 +118,6 @@ const openReply = () => {
             <div>
               <div class="text-sm font-semibold text-white">
                 {{ authorName }}
-              </div>
-              <div v-if="post.response_to" class="text-xs text-white/60">
-                Réponse à
-                <span class="font-mono"
-                  >@{{ post.response_to || "unknown" }}</span
-                >
               </div>
               <RouterLink
                 :to="`/user/${authorHandle}`"
@@ -190,7 +161,7 @@ const openReply = () => {
               <span class="material-symbols-outlined text-[18px]"
                 >chat_bubble</span
               >
-              <span>{{ totalReplies }}</span>
+              <span>{{ post.replies_count }}</span>
             </button>
             <ReactionBar :post="post" :reload="props.reload" />
           </div>

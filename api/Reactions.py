@@ -1,49 +1,56 @@
 from flask import session
 from flask_openapi3 import APIBlueprint
-from lib.make_error import make_error
-from structures import PostId, PostIdWithReaction
+from lib.responses import make_error, make_success
 from .tags import post_tag
-from db.api.User import get_user
-from db.api.Post import get_post
-from db.api.Reaction import (
-    add_reaction,
-    remove_reaction,
-    clear_reactions_for_post,
-    get_reaction_count,
-    reaction_exists,
-)
+
+from db.model import Reaction, User
+import structures
 
 
 api = APIBlueprint("Reactions", __name__)
 
 
-@api.get("/<uuid:post_id>/reactions/<string:reaction>", tags=[post_tag])
-def get_reaction(path: PostIdWithReaction):
-    if get_post(path.post_id) is None:
+@api.get(
+    "/<uuid:post_id>/reactions/<string:reaction>",
+    tags=[post_tag],
+    responses={200: structures.Count},
+)
+def get_reaction(path: structures.PostIdWithReaction):
+    if Reaction.query.filter_by(post_id=path.post_id).first() is None:
         return make_error(404, "Post not found")
-    count = get_reaction_count(path.post_id, path.reaction)
-    return {"count": count}
+    count = Reaction.query.filter_by(
+        post=path.post_id, character=path.reaction
+    ).count()
+    return structures.Count(count=count)
 
 
 @api.post("/<uuid:post_id>/reactions/<string:reaction>", tags=[post_tag])
-def add_reaction_api(path: PostIdWithReaction):
+def add_reaction_api(path: structures.PostIdWithReaction):
     if "user_id" not in session:
         return make_error(401, "Unauthorized")
-    user = get_user(session["user_id"])
+    user: User = User.query.get(session["user_id"])
     if user is None:
         return make_error(404, "User not found")
 
-    if reaction_exists(str(path.post_id), session["user_id"], path.reaction):
-        remove_reaction(str(path.post_id), session["user_id"], path.reaction)
-        return make_error(200, "Reaction removed")
+    exists = (
+        Reaction.query.filter_by(
+            post=path.post_id, author=user.username, character=path.reaction
+        ).first()
+        is not None
+    )
+
+    if exists:
+        Reaction.query.session.delete(
+            Reaction.query.filter_by(
+                post=path.post_id, author=user.username, character=path.reaction
+            ).first()
+        )
+        Reaction.query.session.commit()
+        return make_success(200, "Reaction removed")
     else:
-        add_reaction(str(path.post_id), user.username, path.reaction)
-        return make_error(201, "Reaction added")
-
-
-@api.delete("/<uuid:post_id>/reactions/bulk", tags=[post_tag])
-def bulk_remove_reaction(path: PostId):
-    if "user_id" not in session:
-        return make_error(401, "Unauthorized")
-    clear_reactions_for_post(str(path.post_id))
-    return make_error(204, "All reactions cleared")
+        new_reaction = Reaction(
+            post=path.post_id, author=user.username, character=path.reaction
+        )
+        Reaction.query.session.add(new_reaction)
+        Reaction.query.session.commit()
+        return make_success(201, "Reaction added")

@@ -1,10 +1,10 @@
 import uuid
-from sqlalchemy import String, ForeignKey
+from sqlalchemy import String, ForeignKey, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from db import db
-from db.api.Reaction import get_reactions_summary
+from db.model.Reaction import Reaction
 import structures
 
 
@@ -60,9 +60,22 @@ class Post(db.Model):
             content=self.body,
             author=self.author_fk.to_structure() if self.author_fk else None,
             response_to=str(self.reply_to) if self.reply_to else None,
-            replies=[reply.to_structure(depth=depth - 1) for reply in self.replies]
-            if depth > 0
-            else [],
+            replies=(
+                [reply.to_structure(depth=depth - 1) for reply in self.replies]
+                if depth > 0
+                else []
+            ),
             posted_at=self.posted_at.isoformat(),
-            reactions=get_reactions_summary(self.id),
+            reactions=(
+                {
+                    character: count
+                    for character, count in db.session.query(
+                        Reaction.character, func.count(Reaction.character)
+                    )
+                    .filter(Reaction.post == self.id)
+                    .group_by(Reaction.character)
+                    .all()
+                }
+            ),
+            replies_count=len(self.replies),
         )

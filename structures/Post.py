@@ -2,13 +2,12 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from pydantic import BaseModel, RootModel, Field
 
 from structures.User import User
 from lib import UUID_RE
-from db.api.Reaction import get_reactions_summary
 
 
 class Post(BaseModel):
@@ -61,6 +60,17 @@ class Post(BaseModel):
         description="List of replies to this post",
     )
 
+    replies_count: int = Field(
+        0,
+        description="Number of replies to this post",
+        ge=0,
+    )
+
+    reactions: Dict[str, int] = Field(
+        default_factory=dict,
+        description="List of reactions and their counts",
+    )
+
     def to_dict(self) -> dict:
         return {
             "id": self.id,
@@ -70,7 +80,8 @@ class Post(BaseModel):
             "response_to": self.response_to,
             "posted_at": self.posted_at,
             "replies": [reply.to_dict() for reply in self.replies],
-            "reactions": get_reactions_summary(self.id),
+            "reactions": self.reactions,
+            "replies_count": self.replies_count,
         }
 
 

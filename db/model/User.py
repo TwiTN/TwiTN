@@ -1,6 +1,7 @@
 from sqlalchemy import String
 from db import db
 import structures
+import bcrypt
 
 
 class User(db.Model):
@@ -36,6 +37,14 @@ class User(db.Model):
         cascade="delete-orphan, all",
         backref="author_fk",
     )
+
+    def update_password(self, password: str):
+        self.password = bcrypt.hashpw(
+            password.encode("utf-8"), bcrypt.gensalt()
+        ).decode("utf-8")
+
+    def verify_password(self, password: str) -> bool:
+        return bcrypt.checkpw(password.encode("utf-8"), self.password.encode("utf-8"))
 
     def to_structure(self) -> "structures.User":
         return structures.User(

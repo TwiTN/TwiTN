@@ -23,12 +23,6 @@ class User(BaseModel):
         default="",
     )
 
-    def update_password(self, new_password: str):
-        raise NotImplementedError("Password update not implemented yet.")
-
-    def verify_password(self, password: str) -> bool:
-        raise NotImplementedError("Password verification not implemented yet.")
-
     def to_dict(self) -> dict:
         return {
             "username": self.username,

@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 
 
 class Paging(BaseModel):
-    page: int = Field(1, description="Page number", ge=1)
+    page: int = Field(0, description="Page number", ge=1)
     size: int = Field(10, description="Number of items per page", ge=1, le=100)
 
 
