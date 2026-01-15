@@ -1,3 +1,4 @@
+from typing import List
 import uuid
 from sqlalchemy import String, ForeignKey, func
 from sqlalchemy.dialects.postgresql import UUID
@@ -53,6 +54,15 @@ class Post(db.Model):
         lazy=True,
     )
 
+    def _get_parents(self) -> List["structures.Post"]:
+        parents = []
+        current = self.parent
+        while current:
+            parents.append(current.to_structure())
+            current = current.parent
+        parents.reverse()
+        return parents
+
     def to_structure(self, depth=0) -> "structures.Post":
         return structures.Post(
             id=str(self.id),
@@ -78,4 +88,5 @@ class Post(db.Model):
                 }
             ),
             replies_count=len(self.replies),
+            parents=self._get_parents(),
         )

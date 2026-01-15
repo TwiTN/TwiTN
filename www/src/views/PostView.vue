@@ -8,7 +8,6 @@ import PostModal from "../components/PostModal.vue";
 
 const route = useRoute();
 const post = ref(null);
-const parentChain = ref([]);
 const loading = ref(true);
 const error = ref("");
 const replyModalOpen = ref(false);
@@ -38,7 +37,7 @@ const parentThread = computed(() => {
   if (!post.value) {
     return [];
   }
-  const chain = parentChain.value || [];
+  const chain = post.value.parents || [];
   const items = chain.map((parent, index) => ({
     post: parent,
     depth: index,
@@ -57,47 +56,14 @@ const parentThread = computed(() => {
   return items;
 });
 
-const fetchPostById = async (postId) => {
-  const res = await apiFetch(`/api/posts/${postId}?depth=0`);
-  if (!res.ok) {
-    return null;
-  }
-  return res.json();
-};
-
-const loadParentChain = async (currentPost) => {
-  parentChain.value = [];
-  if (!currentPost || !currentPost.response_to) {
-    return;
-  }
-
-  const chain = [];
-  const seen = new Set([currentPost.id]);
-  let nextId = currentPost.response_to;
-
-  while (nextId && !seen.has(nextId)) {
-    seen.add(nextId);
-    const parent = await fetchPostById(nextId);
-    if (!parent) {
-      break;
-    }
-    chain.push(parent);
-    nextId = parent.response_to;
-  }
-
-  parentChain.value = chain.reverse();
-};
-
 const loadPost = async () => {
   loading.value = true;
   error.value = "";
   post.value = null;
-  parentChain.value = [];
   try {
     const res = await apiFetch(`/api/posts/${route.params.id}?depth=1`);
     if (res.ok) {
       post.value = await res.json();
-      await loadParentChain(post.value);
     } else {
       error.value = (await readError(res)) || "Post introuvable.";
     }
@@ -166,7 +132,7 @@ watch(
     <div v-if="loading" class="text-white/70">Chargement...</div>
     <div v-else-if="error" class="text-amber-300">{{ error }}</div>
     <div v-else-if="post" class="space-y-6">
-      <div v-if="parentChain.length" class="space-y-4">
+      <div v-if="parentThread.length" class="space-y-4">
         <div class="text-sm text-white/60">Fil parent</div>
         <div class="space-y-4">
           <div
@@ -174,6 +140,8 @@ watch(
             :key="item.post.id"
             class="space-y-2"
           >
+          <div
+              :style="{ marginLeft: `${item.depth * 16}px` }"  >
             <div
               v-if="item.parentHandle"
               class="flex items-center gap-2 text-xs text-white/60"
@@ -196,14 +164,15 @@ watch(
               <span>Tweet d'origine</span>
             </div>
             <div
-              class="pl-4 border-l border-white/10"
-              :style="{ marginLeft: `${item.depth * 16}px` }"
+              class="mt-4 pl-4 border-l border-white/10"
             >
+
               <PostCard
                 :post="item.post"
                 :show-replies="false"
                 :reload="loadPost"
               />
+            </div>
             </div>
           </div>
         </div>

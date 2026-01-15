@@ -71,6 +71,11 @@ class Post(BaseModel):
         description="List of reactions and their counts",
     )
 
+    parents: List["Post"] = Field(
+        default_factory=list,
+        description="List of parent posts up to the root",
+    )
+
     def to_dict(self) -> dict:
         return {
             "id": self.id,
@@ -82,6 +87,7 @@ class Post(BaseModel):
             "replies": [reply.to_dict() for reply in self.replies],
             "reactions": self.reactions,
             "replies_count": self.replies_count,
+            "parents": [parent.to_dict() for parent in self.parents],
         }
 
 
