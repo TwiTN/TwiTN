@@ -2,6 +2,7 @@ from sqlalchemy import text
 from db import db
 from db.model import Post
 
+
 def create_post(title, body, author, posted_at, reply_to=None) -> Post:
     post = Post(
         title=title,
@@ -14,6 +15,7 @@ def create_post(title, body, author, posted_at, reply_to=None) -> Post:
     db.session.commit()
     return post
 
+
 def get_posts_by_user(username, limit=20, offset=0) -> list[Post]:
     return (
         db.session.query(Post)
@@ -24,12 +26,9 @@ def get_posts_by_user(username, limit=20, offset=0) -> list[Post]:
         .all()
     )
 
+
 def get_post(post_id):
-    return (
-        db.session.query(Post)
-        .filter(Post.id == post_id)
-        .first()
-    )
+    return db.session.query(Post).filter(Post.id == post_id).first()
 
 
 def list_posts(limit=20, offset=0) -> list[Post]:

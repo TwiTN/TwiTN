@@ -1,6 +1,5 @@
 import os
 from flask_openapi3 import OpenAPI, Info
-from werkzeug.routing import Rule
 from flask import send_file
 from flask_session import Session
 from cachelib.file import FileSystemCache

@@ -41,6 +41,7 @@ def get_user_by_id(path: UserId):
 
     return user.to_structure().to_dict()
 
+
 @api.get(
     "/<string:username>/posts",
     tags=[user_tag],
@@ -52,7 +53,6 @@ def get_posts_by_user_api(path: UserId, query: Paging):
     if user is None:
         return make_error(404, "User not found")
 
-
     posts = get_posts_by_user(
         path.username,
         limit=getattr(query, "limit", 20),
@@ -60,6 +60,7 @@ def get_posts_by_user_api(path: UserId, query: Paging):
     )
 
     return PostList([post.to_structure() for post in posts]).to_array()
+
 
 @api.post(
     "/",
