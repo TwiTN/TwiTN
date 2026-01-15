@@ -4,6 +4,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 from db import db
+from db.api.Reaction import get_reactions_summary
 import structures
 
 
@@ -63,4 +64,5 @@ class Post(db.Model):
             if depth > 0
             else [],
             posted_at=self.posted_at.isoformat(),
+            reactions=get_reactions_summary(self.id),
         )

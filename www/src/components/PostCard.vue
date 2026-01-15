@@ -151,7 +151,7 @@ const openReply = () => {
               <span class="material-symbols-outlined text-[18px]">chat_bubble</span>
               <span>{{ totalReplies }}</span>
             </button>
-            <ReactionBar :post-id="post.id" :reload="props.reload" />
+            <ReactionBar :post="post" :reload="props.reload" />
           </div>
         </div>
       </div>
