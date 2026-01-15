@@ -1,5 +1,5 @@
-import { ref } from 'vue';
-import { apiFetch, readError } from '../api/client';
+import { ref } from "vue";
+import { apiFetch, readError } from "../api/client";
 
 const currentUser = ref(null);
 const authReady = ref(false);
@@ -7,7 +7,7 @@ const authReady = ref(false);
 async function loadCurrentUser() {
   authReady.value = false;
   try {
-    const res = await apiFetch('/api/user/');
+    const res = await apiFetch("/api/user/");
     if (res.ok) {
       currentUser.value = await res.json();
     } else {
@@ -21,8 +21,8 @@ async function loadCurrentUser() {
 }
 
 async function login(credentials) {
-  const res = await apiFetch('/api/user/login', {
-    method: 'POST',
+  const res = await apiFetch("/api/user/login", {
+    method: "POST",
     body: credentials,
   });
 
@@ -39,14 +39,14 @@ async function login(credentials) {
 }
 
 async function logout() {
-  const res = await apiFetch('/api/user/logout', { method: 'POST' });
+  const res = await apiFetch("/api/user/logout", { method: "POST" });
   currentUser.value = null;
   return res.ok;
 }
 
 async function signup(payload) {
-  const res = await apiFetch('/api/user/', {
-    method: 'POST',
+  const res = await apiFetch("/api/user/", {
+    method: "POST",
     body: payload,
   });
 
@@ -62,5 +62,5 @@ async function signup(payload) {
 }
 
 export function useAuth() {
-  return {currentUser, authReady, loadCurrentUser, login, logout, signup};
+  return { currentUser, authReady, loadCurrentUser, login, logout, signup };
 }

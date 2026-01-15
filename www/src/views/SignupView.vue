@@ -1,24 +1,24 @@
 <script setup>
-import { reactive, ref } from 'vue';
-import { RouterLink, useRouter } from 'vue-router';
-import { useAuth } from '../state/auth';
+import { reactive, ref } from "vue";
+import { RouterLink, useRouter } from "vue-router";
+import { useAuth } from "../state/auth";
 
 const router = useRouter();
 const { signup } = useAuth();
 
-const username = ref('');
-const displayName = ref('');
-const email = ref('');
-const password = ref('');
-const confirmPassword = ref('');
-const error = ref('');
+const username = ref("");
+const displayName = ref("");
+const email = ref("");
+const password = ref("");
+const confirmPassword = ref("");
+const error = ref("");
 const loading = ref(false);
 const fieldErrors = reactive({
-  username: '',
-  displayName: '',
-  email: '',
-  password: '',
-  confirmPassword: '',
+  username: "",
+  displayName: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
 });
 const touched = reactive({
   username: false,
@@ -32,40 +32,42 @@ const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 const validateField = (field) => {
   switch (field) {
-    case 'username': {
+    case "username": {
       const value = username.value.trim();
       if (!value) return "Nom d'utilisateur requis.";
-      if (value.length < 5 || value.length > 20) return 'Entre 5 et 20 caractères.';
-      return '';
+      if (value.length < 5 || value.length > 20)
+        return "Entre 5 et 20 caractères.";
+      return "";
     }
-    case 'displayName': {
+    case "displayName": {
       const value = displayName.value.trim();
       if (!value) return "Nom d'affichage requis.";
-      if (value.length > 50) return 'Maximum 50 caractères.';
-      return '';
+      if (value.length > 50) return "Maximum 50 caractères.";
+      return "";
     }
-    case 'email': {
+    case "email": {
       const value = email.value.trim();
-      if (!value) return 'Email requis.';
-      if (value.length > 100) return 'Maximum 100 caractères.';
-      if (!emailPattern.test(value)) return 'Email invalide.';
-      return '';
+      if (!value) return "Email requis.";
+      if (value.length > 100) return "Maximum 100 caractères.";
+      if (!emailPattern.test(value)) return "Email invalide.";
+      return "";
     }
-    case 'password': {
+    case "password": {
       const value = password.value;
-      if (!value) return 'Mot de passe requis.';
-      if (value.length < 8) return 'Minimum 8 caractères.';
-      return '';
+      if (!value) return "Mot de passe requis.";
+      if (value.length < 8) return "Minimum 8 caractères.";
+      return "";
     }
-    case 'confirmPassword': {
+    case "confirmPassword": {
       const value = confirmPassword.value;
-      if (!value) return 'Confirmation requise.';
-      if (value.length < 8) return 'Minimum 8 caractères.';
-      if (value !== password.value) return 'Les mots de passe ne correspondent pas.';
-      return '';
+      if (!value) return "Confirmation requise.";
+      if (value.length < 8) return "Minimum 8 caractères.";
+      if (value !== password.value)
+        return "Les mots de passe ne correspondent pas.";
+      return "";
     }
     default:
-      return '';
+      return "";
   }
 };
 
@@ -90,13 +92,13 @@ const handleInput = (field) => {
   if (touched[field]) {
     fieldErrors[field] = validateField(field);
   }
-  if (field === 'password' && touched.confirmPassword) {
-    fieldErrors.confirmPassword = validateField('confirmPassword');
+  if (field === "password" && touched.confirmPassword) {
+    fieldErrors.confirmPassword = validateField("confirmPassword");
   }
 };
 
 const submit = async () => {
-  error.value = '';
+  error.value = "";
 
   Object.keys(touched).forEach((field) => {
     touched[field] = true;
@@ -116,7 +118,7 @@ const submit = async () => {
   loading.value = false;
 
   if (result.ok) {
-    router.push('/login');
+    router.push("/login");
     return;
   }
 
@@ -125,16 +127,21 @@ const submit = async () => {
     return;
   }
 
-  error.value = result.error || 'Erreur lors de la création du compte.';
+  error.value = result.error || "Erreur lors de la création du compte.";
 };
 </script>
 
 <template>
   <div class="min-h-[70vh] flex items-center justify-center px-4 py-12">
-    <div class="card w-full max-w-md backdrop-blur-lg bg-white/5 border border-white/10 shadow-lg">
+    <div
+      class="card w-full max-w-md backdrop-blur-lg bg-white/5 border border-white/10 shadow-lg"
+    >
       <div class="card-body space-y-5">
         <div class="space-y-2">
-          <RouterLink to="/" class="flex items-center text-gray-400 hover:text-gray-300">
+          <RouterLink
+            to="/"
+            class="flex items-center text-gray-400 hover:text-gray-300"
+          >
             <span class="material-icons-outlined">chevron_left</span>
             <span class="font-medium text-xs">Retour</span>
           </RouterLink>
@@ -142,100 +149,204 @@ const submit = async () => {
         </div>
 
         <div class="form-control">
-          <div class="flex items-center bg-black/10 border border-white/10 rounded-lg overflow-visible">
-            <span class="material-icons-outlined text-white/70 text-[20px] pl-4">person</span>
-            <input v-model="username" type="text" placeholder="Nom d'utilisateur" minlength="5" maxlength="20" aria-describedby="usernameError" :aria-invalid="fieldErrors.username ? 'true' : 'false'"
+          <div
+            class="flex items-center bg-black/10 border border-white/10 rounded-lg overflow-visible"
+          >
+            <span class="material-icons-outlined text-white/70 text-[20px] pl-4"
+              >person</span
+            >
+            <input
+              v-model="username"
+              type="text"
+              placeholder="Nom d'utilisateur"
+              minlength="5"
+              maxlength="20"
+              aria-describedby="usernameError"
+              :aria-invalid="fieldErrors.username ? 'true' : 'false'"
               :class="[
                 'input bg-transparent text-white placeholder-white/70 border-none focus:outline-none w-full',
                 fieldErrors.username ? 'input-error' : '',
               ]"
-              @keyup.enter="submit" @input="handleInput('username')" @blur="handleBlur('username')"/>
+              @keyup.enter="submit"
+              @input="handleInput('username')"
+              @blur="handleBlur('username')"
+            />
             <div class="tooltip tooltip-left" data-tip="5 à 20 caractères">
-              <span class="material-icons-outlined text-white/60 text-[18px] pr-4">info</span>
+              <span
+                class="material-icons-outlined text-white/60 text-[18px] pr-4"
+                >info</span
+              >
             </div>
           </div>
-          <span id="usernameError" class="mt-1 text-xs text-amber-300" v-show="fieldErrors.username">
+          <span
+            v-show="fieldErrors.username"
+            id="usernameError"
+            class="mt-1 text-xs text-amber-300"
+          >
             {{ fieldErrors.username }}
           </span>
         </div>
 
         <div class="form-control">
-          <div class="flex items-center bg-black/10 border border-white/10 rounded-lg overflow-visible">
-            <span class="material-icons-outlined text-white/70 text-[20px] pl-4">badge</span>
-            <input v-model="displayName" type="text" placeholder="Nom d'affichage" maxlength="50" aria-describedby="displayNameError" :aria-invalid="fieldErrors.displayName ? 'true' : 'false'"
+          <div
+            class="flex items-center bg-black/10 border border-white/10 rounded-lg overflow-visible"
+          >
+            <span class="material-icons-outlined text-white/70 text-[20px] pl-4"
+              >badge</span
+            >
+            <input
+              v-model="displayName"
+              type="text"
+              placeholder="Nom d'affichage"
+              maxlength="50"
+              aria-describedby="displayNameError"
+              :aria-invalid="fieldErrors.displayName ? 'true' : 'false'"
               :class="[
                 'input bg-transparent text-white placeholder-white/70 border-none focus:outline-none w-full',
                 fieldErrors.displayName ? 'input-error' : '',
               ]"
-              @keyup.enter="submit" @input="handleInput('displayName')" @blur="handleBlur('displayName')"/>
+              @keyup.enter="submit"
+              @input="handleInput('displayName')"
+              @blur="handleBlur('displayName')"
+            />
             <div class="tooltip tooltip-left" data-tip="Max 50 caractères">
-              <span class="material-icons-outlined text-white/60 text-[18px] pr-4">info</span>
+              <span
+                class="material-icons-outlined text-white/60 text-[18px] pr-4"
+                >info</span
+              >
             </div>
           </div>
-          <span id="displayNameError" class="mt-1 text-xs text-amber-300" v-show="fieldErrors.displayName">
+          <span
+            v-show="fieldErrors.displayName"
+            id="displayNameError"
+            class="mt-1 text-xs text-amber-300"
+          >
             {{ fieldErrors.displayName }}
           </span>
         </div>
 
         <div class="form-control">
-          <div class="flex items-center bg-black/10 border border-white/10 rounded-lg overflow-visible">
-            <span class="material-icons-outlined text-white/70 text-[20px] pl-4">email</span>
-            <input v-model="email"  type="email" placeholder="Email" maxlength="100" aria-describedby="emailError" :aria-invalid="fieldErrors.email ? 'true' : 'false'"
+          <div
+            class="flex items-center bg-black/10 border border-white/10 rounded-lg overflow-visible"
+          >
+            <span class="material-icons-outlined text-white/70 text-[20px] pl-4"
+              >email</span
+            >
+            <input
+              v-model="email"
+              type="email"
+              placeholder="Email"
+              maxlength="100"
+              aria-describedby="emailError"
+              :aria-invalid="fieldErrors.email ? 'true' : 'false'"
               :class="[
                 'input bg-transparent text-white placeholder-white/70 border-none focus:outline-none w-full',
                 fieldErrors.email ? 'input-error' : '',
               ]"
-              @keyup.enter="submit" @input="handleInput('email')" @blur="handleBlur('email')"/>
+              @keyup.enter="submit"
+              @input="handleInput('email')"
+              @blur="handleBlur('email')"
+            />
             <div class="tooltip tooltip-left" data-tip="Email valide">
-              <span class="material-icons-outlined text-white/60 text-[18px] pr-4">info</span>
+              <span
+                class="material-icons-outlined text-white/60 text-[18px] pr-4"
+                >info</span
+              >
             </div>
           </div>
-          <span id="emailError" class="mt-1 text-xs text-amber-300" v-show="fieldErrors.email">
+          <span
+            v-show="fieldErrors.email"
+            id="emailError"
+            class="mt-1 text-xs text-amber-300"
+          >
             {{ fieldErrors.email }}
           </span>
         </div>
 
         <div class="form-control">
-          <div class="flex items-center bg-black/10 border border-white/10 rounded-lg overflow-visible">
-            <span class="material-icons-outlined text-white/70 text-[20px] pl-4">password</span>
-            <input v-model="password" type="password" placeholder="Mot de passe" minlength="8" aria-describedby="passwordError" :aria-invalid="fieldErrors.password ? 'true' : 'false'"
+          <div
+            class="flex items-center bg-black/10 border border-white/10 rounded-lg overflow-visible"
+          >
+            <span class="material-icons-outlined text-white/70 text-[20px] pl-4"
+              >password</span
+            >
+            <input
+              v-model="password"
+              type="password"
+              placeholder="Mot de passe"
+              minlength="8"
+              aria-describedby="passwordError"
+              :aria-invalid="fieldErrors.password ? 'true' : 'false'"
               :class="[
                 'input bg-transparent text-white placeholder-white/70 border-none focus:outline-none w-full',
                 fieldErrors.password ? 'input-error' : '',
               ]"
-              @keyup.enter="submit" @input="handleInput('password')" @blur="handleBlur('password')"/>
+              @keyup.enter="submit"
+              @input="handleInput('password')"
+              @blur="handleBlur('password')"
+            />
             <div class="tooltip tooltip-left" data-tip="Minimum 8 caractères">
-              <span class="material-icons-outlined text-white/60 text-[18px] pr-4">info</span>
+              <span
+                class="material-icons-outlined text-white/60 text-[18px] pr-4"
+                >info</span
+              >
             </div>
           </div>
-          <span id="passwordError" class="mt-1 text-xs text-amber-300" v-show="fieldErrors.password">
+          <span
+            v-show="fieldErrors.password"
+            id="passwordError"
+            class="mt-1 text-xs text-amber-300"
+          >
             {{ fieldErrors.password }}
           </span>
         </div>
 
         <div class="form-control">
-          <div class="flex items-center bg-black/10 border border-white/10 rounded-lg overflow-visible">
-            <span class="material-icons-outlined text-white/70 text-[20px] pl-4">password</span>
+          <div
+            class="flex items-center bg-black/10 border border-white/10 rounded-lg overflow-visible"
+          >
+            <span class="material-icons-outlined text-white/70 text-[20px] pl-4"
+              >password</span
+            >
             <input
-              v-model="confirmPassword" type="password" placeholder="Confirmer le mot de passe" minlength="8" aria-describedby="confirmPasswordError" :aria-invalid="fieldErrors.confirmPassword ? 'true' : 'false'"
+              v-model="confirmPassword"
+              type="password"
+              placeholder="Confirmer le mot de passe"
+              minlength="8"
+              aria-describedby="confirmPasswordError"
+              :aria-invalid="fieldErrors.confirmPassword ? 'true' : 'false'"
               :class="[
                 'input bg-transparent text-white placeholder-white/70 border-none focus:outline-none w-full',
                 fieldErrors.confirmPassword ? 'input-error' : '',
               ]"
-              @keyup.enter="submit" @input="handleInput('confirmPassword')" @blur="handleBlur('confirmPassword')"/>
+              @keyup.enter="submit"
+              @input="handleInput('confirmPassword')"
+              @blur="handleBlur('confirmPassword')"
+            />
             <div class="tooltip tooltip-left" data-tip="Doit correspondre">
-              <span class="material-icons-outlined text-white/60 text-[18px] pr-4">info</span>
+              <span
+                class="material-icons-outlined text-white/60 text-[18px] pr-4"
+                >info</span
+              >
             </div>
           </div>
-          <span id="confirmPasswordError" class="mt-1 text-xs text-amber-300" v-show="fieldErrors.confirmPassword">
+          <span
+            v-show="fieldErrors.confirmPassword"
+            id="confirmPasswordError"
+            class="mt-1 text-xs text-amber-300"
+          >
             {{ fieldErrors.confirmPassword }}
           </span>
         </div>
 
         <div v-if="error" class="text-amber-300 text-sm">{{ error }}</div>
 
-        <button class="btn bg-white text-gray-800 font-semibold hover:bg-gray-100 border-none shadow-md transition" :disabled="loading" @click="submit">
-          {{ loading ? 'Inscription...' : 'Valider' }}
+        <button
+          class="btn bg-white text-gray-800 font-semibold hover:bg-gray-100 border-none shadow-md transition"
+          :disabled="loading"
+          @click="submit"
+        >
+          {{ loading ? "Inscription..." : "Valider" }}
           <span class="material-icons-outlined text-[20px]">chevron_right</span>
         </button>
       </div>

@@ -1,9 +1,9 @@
 <script setup>
-import { onMounted } from 'vue';
-import { RouterView } from 'vue-router';
-import { useAuth } from './state/auth';
-import AppFooter from './components/AppFooter.vue';
-import AppNav from './components/AppNav.vue';
+import { onMounted } from "vue";
+import { RouterView } from "vue-router";
+import { useAuth } from "./state/auth";
+import AppFooter from "./components/AppFooter.vue";
+import AppNav from "./components/AppNav.vue";
 
 const { loadCurrentUser } = useAuth();
 

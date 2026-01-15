@@ -1,5 +1,5 @@
 :root {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: "Space Grotesk", sans-serif;
   color: #f8fafc;
   background-color: #0b0b0b;
   font-synthesis: none;
@@ -27,7 +27,7 @@ a {
 }
 
 .material-symbols-outlined {
-  font-family: 'Material Symbols Outlined Variable';
+  font-family: "Material Symbols Outlined Variable";
   font-weight: normal;
   font-style: normal;
   font-size: 24px;
@@ -38,12 +38,12 @@ a {
   white-space: nowrap;
   word-wrap: normal;
   direction: ltr;
-  -moz-font-feature-settings: 'liga';
+  -moz-font-feature-settings: "liga";
   -moz-osx-font-smoothing: grayscale;
 }
 
 .material-icons-outlined {
-  font-family: 'Material Icons Outlined';
+  font-family: "Material Icons Outlined";
   font-weight: normal;
   font-style: normal;
   font-size: 24px;
@@ -54,10 +54,9 @@ a {
   white-space: nowrap;
   word-wrap: normal;
   direction: ltr;
-  -moz-font-feature-settings: 'liga';
+  -moz-font-feature-settings: "liga";
   -moz-osx-font-smoothing: grayscale;
 }
-
 
 @import "tailwindcss";
 @plugin "daisyui";

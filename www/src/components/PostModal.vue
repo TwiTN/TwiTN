@@ -1,5 +1,5 @@
 <script setup>
-import PostComposer from './PostComposer.vue';
+import PostComposer from "./PostComposer.vue";
 
 const props = defineProps({
   open: {
@@ -12,24 +12,31 @@ const props = defineProps({
   },
   title: {
     type: String,
-    default: 'Nouveau post',
+    default: "Nouveau post",
   },
 });
 
-const emit = defineEmits(['close', 'posted']);
+const emit = defineEmits(["close", "posted"]);
 
-const close = () => emit('close');
+const close = () => emit("close");
 
 const handlePosted = (post) => {
-  emit('posted', post);
-  emit('close');
+  emit("posted", post);
+  emit("close");
 };
 </script>
 
 <template>
   <div v-if="open" class="modal modal-open">
-    <div class="modal-box bg-black/90 border border-white/10 text-white relative">
-      <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" aria-label="Close" @click="close">
+    <div
+      class="modal-box bg-black/90 border border-white/10 text-white relative"
+    >
+      <button
+        type="button"
+        class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+        aria-label="Close"
+        @click="close"
+      >
         X
       </button>
       <div class="text-sm text-white/60 mb-3">{{ title }}</div>

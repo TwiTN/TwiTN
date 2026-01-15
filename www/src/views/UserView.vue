@@ -1,20 +1,20 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue';
-import { RouterLink, useRoute } from 'vue-router';
-import { apiFetch, readError } from '../api/client';
-import PostCard from '../components/PostCard.vue';
+import { onMounted, ref, watch } from "vue";
+import { RouterLink, useRoute } from "vue-router";
+import { apiFetch, readError } from "../api/client";
+import PostCard from "../components/PostCard.vue";
 
 const route = useRoute();
 const user = ref(null);
 const loading = ref(true);
-const error = ref('');
+const error = ref("");
 const posts = ref([]);
 const postsLoading = ref(false);
-const postsError = ref('');
+const postsError = ref("");
 
 const loadPosts = async (username) => {
   postsLoading.value = true;
-  postsError.value = '';
+  postsError.value = "";
   posts.value = [];
   try {
     const res = await apiFetch(`/api/user/${username}/posts`);
@@ -23,9 +23,10 @@ const loadPosts = async (username) => {
       posts.value = allPosts;
       return;
     }
-    postsError.value = (await readError(res)) || 'Erreur lors du chargement des tweets.';
+    postsError.value =
+      (await readError(res)) || "Erreur lors du chargement des tweets.";
   } catch (err) {
-    postsError.value = 'Erreur réseau.';
+    postsError.value = "Erreur réseau.";
   } finally {
     postsLoading.value = false;
   }
@@ -33,7 +34,7 @@ const loadPosts = async (username) => {
 
 const loadUser = async () => {
   loading.value = true;
-  error.value = '';
+  error.value = "";
   user.value = null;
   try {
     const res = await apiFetch(`/api/user/${route.params.username}`);
@@ -41,10 +42,10 @@ const loadUser = async () => {
       user.value = await res.json();
       await loadPosts(user.value.username);
     } else {
-      error.value = (await readError(res)) || 'Utilisateur introuvable.';
+      error.value = (await readError(res)) || "Utilisateur introuvable.";
     }
   } catch (err) {
-    error.value = 'Erreur réseau.';
+    error.value = "Erreur réseau.";
   } finally {
     loading.value = false;
   }
@@ -55,7 +56,7 @@ watch(
   () => route.params.username,
   () => {
     loadUser();
-  }
+  },
 );
 </script>
 
@@ -72,7 +73,11 @@ watch(
       <div class="card bg-black/20 border border-white/10 shadow-xl">
         <div class="card-body space-y-2">
           <div class="flex items-center gap-4">
-            <img src="/res/user-200.png" alt="User avatar" class="w-16 h-16 rounded-full" />
+            <img
+              src="/res/user-200.png"
+              alt="User avatar"
+              class="w-16 h-16 rounded-full"
+            />
             <div>
               <h1 class="text-2xl font-semibold text-white">
                 {{ user.display_name || user.username }}
@@ -86,13 +91,22 @@ watch(
 
       <div class="space-y-4">
         <h2 class="text-lg font-semibold text-white">Tweets</h2>
-        <div v-if="postsLoading" class="text-white/70">Chargement des tweets...</div>
-        <div v-else-if="postsError" class="text-amber-300">{{ postsError }}</div>
+        <div v-if="postsLoading" class="text-white/70">
+          Chargement des tweets...
+        </div>
+        <div v-else-if="postsError" class="text-amber-300">
+          {{ postsError }}
+        </div>
         <div v-else-if="posts.length === 0" class="text-white/70">
           Aucun tweet pour le moment.
         </div>
         <div v-else class="space-y-4">
-          <PostCard v-for="post in posts" :key="post.id" :post="post" :reload="loadPosts" />
+          <PostCard
+            v-for="post in posts"
+            :key="post.id"
+            :post="post"
+            :reload="loadPosts"
+          />
         </div>
       </div>
     </div>

@@ -12,7 +12,7 @@ async function loadPosts() {
       return;
     }
 
-    posts.forEach(post => {
+    posts.forEach((post) => {
       const card = document.createElement("div");
       card.className = "card bg-base-100 shadow-md";
 

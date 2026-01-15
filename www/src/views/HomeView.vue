@@ -1,30 +1,31 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
-import { RouterLink } from 'vue-router';
-import { apiFetch, readError } from '../api/client';
-import { useAuth } from '../state/auth';
-import PostCard from '../components/PostCard.vue';
-import PostModal from '../components/PostModal.vue';
+import { computed, onMounted, ref } from "vue";
+import { RouterLink } from "vue-router";
+import { apiFetch, readError } from "../api/client";
+import { useAuth } from "../state/auth";
+import PostCard from "../components/PostCard.vue";
+import PostModal from "../components/PostModal.vue";
 
 const posts = ref([]);
 const loading = ref(true);
-const error = ref('');
+const error = ref("");
 
 const { currentUser } = useAuth();
 const postModalOpen = ref(false);
 
 const loadPosts = async () => {
   loading.value = true;
-  error.value = '';
+  error.value = "";
   try {
-    const res = await apiFetch('/api/posts/');
+    const res = await apiFetch("/api/posts/");
     if (res.ok) {
       posts.value = await res.json();
     } else {
-      error.value = (await readError(res)) || 'Erreur lors du chargement du feed.';
+      error.value =
+        (await readError(res)) || "Erreur lors du chargement du feed.";
     }
   } catch (err) {
-    error.value = 'Erreur réseau.';
+    error.value = "Erreur réseau.";
   } finally {
     loading.value = false;
   }
@@ -56,18 +57,29 @@ const handlePosted = () => {
               Un micro réseau social pour poster, répondre et réagir en un clic.
             </p>
           </div>
-          <button v-if="currentUser" type="button" class="btn btn-sm bg-white/10 border border-white/20 text-white hover:bg-white/20" @click="openNewPost">
+          <button
+            v-if="currentUser"
+            type="button"
+            class="btn btn-sm bg-white/10 border border-white/20 text-white hover:bg-white/20"
+            @click="openNewPost"
+          >
             Quoi de neuf ?
           </button>
         </div>
       </div>
     </div>
 
-    <div v-if="!currentUser" class="card bg-black/20 border border-white/10 shadow-xl">
+    <div
+      v-if="!currentUser"
+      class="card bg-black/20 border border-white/10 shadow-xl"
+    >
       <div class="card-body">
         <p class="text-white/80">Connecte-toi pour publier et réagir.</p>
         <div class="card-actions">
-          <RouterLink to="/login" class="btn bg-white text-black hover:bg-white/80">
+          <RouterLink
+            to="/login"
+            class="btn bg-white text-black hover:bg-white/80"
+          >
             Connexion
           </RouterLink>
         </div>
@@ -80,13 +92,29 @@ const handlePosted = () => {
       Aucun post pour le moment.
     </div>
     <div v-else class="space-y-4">
-      <PostCard v-for="post in posts" :key="post.id" :post="post" :reload="loadPosts" />
+      <PostCard
+        v-for="post in posts"
+        :key="post.id"
+        :post="post"
+        :reload="loadPosts"
+      />
     </div>
 
-    <button v-if="currentUser" type="button" class="btn btn-circle bg-white text-black hover:bg-white/80 fixed bottom-6 left-6 shadow-xl z-20 w-16 h-16 text-3xl" aria-label="Nouveau post" @click="openNewPost">
+    <button
+      v-if="currentUser"
+      type="button"
+      class="btn btn-circle bg-white text-black hover:bg-white/80 fixed bottom-6 left-6 shadow-xl z-20 w-16 h-16 text-3xl"
+      aria-label="Nouveau post"
+      @click="openNewPost"
+    >
       <span class="leading-none">+</span>
     </button>
 
-    <PostModal :open="postModalOpen" title="Nouveau post" @close="closeNewPost" @posted="handlePosted"/>
+    <PostModal
+      :open="postModalOpen"
+      title="Nouveau post"
+      @close="closeNewPost"
+      @posted="handlePosted"
+    />
   </div>
 </template>
