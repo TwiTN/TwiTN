@@ -14,6 +14,12 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked
 
 
+FROM node AS frontend
+COPY ./www /www
+
+WORKDIR /www
+RUN npm install && npm run build
+
 # Then, use a final image without uv
 FROM python:3.14-slim-bookworm
 # It is important to use the image that matches the builder, as the path to the
@@ -26,6 +32,7 @@ RUN groupadd --system --gid 999 nonroot \
 
 # Copy the application from the builder
 COPY --from=builder --chown=nonroot:nonroot /app /app
+COPY --from=frontend --chown=nonroot:nonroot /www/dist /app/www/dist
 
 # Place executables in the environment at the front of the path
 ENV PATH="/app/.venv/bin:$PATH"
