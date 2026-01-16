@@ -36,23 +36,23 @@ class UserSignUp(BaseModel):
         description="Unique identifier for the user",
         min_length=5,
         max_length=20,
-        examples=["john_doe", "jane_smith"],
+        json_schema_extra={"examples":["john_doe", "jane_smith"]}
     )
     display_name: str = Field(
         description="Name displayed on the user's profile",
         max_length=50,
-        examples=["John Doe", "Jane Smith"],
+        json_schema_extra={"examples":["John Doe", "Jane Smith"]}
     )
     email: str = Field(
         description="User's email address",
         max_length=100,
         pattern=r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
-        examples=["john.doe@example.com", "jane.smith@example.com"],
+        json_schema_extra={"examples":["john.doe@example.com", "jane.smith@example.com"]}
     )
     password: str = Field(
         description="Password for user authentication",
         min_length=8,
-        examples=["P@ssw0rd123", "SecurePass!"],
+        json_schema_extra={"examples":["P@ssw0rd123", "SecurePass!"]}
     )
 
 
@@ -60,18 +60,18 @@ class UserPatch(BaseModel):
     display_name: str = Field(
         description="Name displayed on the user's profile",
         max_length=50,
-        examples=["John Doe", "Jane Smith"],
+        json_schema_extra={"examples":["john.doe@example.com", "jane.smith@example.com"]}
     )
     email: str = Field(
         description="User's email address",
         max_length=100,
         pattern=r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
-        examples=["john.doe@example.com", "jane.smith@example.com"],
+        json_schema_extra={"examples":["john.doe@example.com", "jane.smith@example.com"]}
     )
     password: str = Field(
         description="Password for user authentication",
         min_length=8,
-        examples=["P@ssw0rd123", "SecurePass!"],
+        json_schema_extra={"examples":["P@ssw0rd123", "SecurePass!"]}
     )
 
 
@@ -80,12 +80,12 @@ class UserLogin(BaseModel):
         description="Unique identifier for the user",
         min_length=5,
         max_length=20,
-        examples=["john_doe", "jane_smith"],
+        json_schema_extra={"examples":["john_doe", "jane_smith"]}
     )
     password: str = Field(
         description="Password for user authentication",
         min_length=8,
-        examples=["P@ssw0rd123", "SecurePass!"],
+        json_schema_extra={"examples":["P@ssw0rd123", "SecurePass!"]}
     )
 
 

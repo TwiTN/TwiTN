@@ -1,6 +1,6 @@
 #!/bin/env python3
 
-from server import create_app
+from main import create_app
 import json
 
 with open("openapi_spec.json", "w") as f:

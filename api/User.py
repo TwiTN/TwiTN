@@ -31,6 +31,7 @@ def get_current_user():
     "/<string:username>",
     tags=[user_tag],
     responses={200: structures.User},
+    summary="Get the specified user"
 )
 def get_user(path: structures.UserId):
     user: User = User.query.get(path.username)
@@ -66,6 +67,7 @@ def get_user_posts(path: structures.UserId, query: structures.Paging):
     "/",
     tags=[user_tag],
     responses={201: structures.User},
+    summary="Register a new user"
 )
 def create_user(body: structures.UserSignUp):
     user = User(
@@ -88,6 +90,7 @@ def create_user(body: structures.UserSignUp):
     "/login",
     tags=[user_tag],
     responses={200: structures.User},
+    summary="Authenticate the user using username and password"
 )
 def login_user(body: structures.UserLogin):
     user: User = User.query.get(body.username)
@@ -99,7 +102,7 @@ def login_user(body: structures.UserLogin):
     return user.to_structure().to_dict()
 
 
-@api.post("/logout", tags=[user_tag], responses={200: None})
+@api.post("/logout", tags=[user_tag], responses={200: None},summary="Logout the user")
 def logout_user():
     session.pop("user_id", None)
 
@@ -110,6 +113,7 @@ def logout_user():
     "/",
     tags=[user_tag],
     responses={204: None},
+    summary="Delete the current user"
 )
 def delete_current_user():
     user_id = session.get("user_id")
