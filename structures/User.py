@@ -26,8 +26,7 @@ class User(BaseModel):
     def to_dict(self) -> dict:
         return {
             "username": self.username,
-            "display_name": self.display_name,
-            "email": self.email,
+            "display_name": self.display_name
         }
 
 
