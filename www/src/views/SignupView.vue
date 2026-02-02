@@ -134,7 +134,7 @@ const submit = async () => {
 <template>
   <div class="min-h-[70vh] flex items-center justify-center px-4 py-12">
     <div
-      class="card w-full max-w-md backdrop-blur-lg bg-white/5 border border-white/10 shadow-lg"
+      class="card w-full max-w-md backdrop-blur-lg auth-card border border-white/10 shadow-lg"
     >
       <div class="card-body space-y-5">
         <div class="space-y-2">

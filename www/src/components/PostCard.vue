@@ -99,7 +99,7 @@ const openReply = () => {
 
 <template>
   <article
-    class="card bg-black/20 border border-white/10 shadow-xl cursor-pointer transition-colors duration-150 hover:bg-white/5"
+    class="card bg-black/20 border border-white/10 cursor-pointer transition-colors duration-150 hover:bg-white/5"
     @click="openPost"
   >
     <div class="card-body gap-4">

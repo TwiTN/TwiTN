@@ -1,11 +1,70 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
 :root {
-  font-family: 'Space Grotesk Variable', sans-serif;
-  color: #f8fafc;
-  background-color: #0b0b0b;
+  font-family: "Space Grotesk Variable", sans-serif;
+  color: var(--twitn-ink);
+  background-color: var(--twitn-bg);
+  color-scheme: dark;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --twitn-bg: #0b0b0b;
+  --twitn-ink: #f8fafc;
+  --twitn-ink-80: rgba(248, 250, 252, 0.8);
+  --twitn-ink-70: rgba(248, 250, 252, 0.7);
+  --twitn-ink-60: rgba(248, 250, 252, 0.6);
+  --twitn-ink-50: rgba(248, 250, 252, 0.5);
+
+  --twitn-line-10: rgba(248, 250, 252, 0.1);
+  --twitn-line-20: rgba(248, 250, 252, 0.2);
+  --twitn-line-30: rgba(248, 250, 252, 0.3);
+  --twitn-line-40: rgba(248, 250, 252, 0.4);
+
+  --twitn-surface-10: rgba(0, 0, 0, 0.1);
+  --twitn-surface-20: rgba(0, 0, 0, 0.2);
+  --twitn-surface-30: rgba(0, 0, 0, 0.3);
+  --twitn-surface-40: rgba(0, 0, 0, 0.4);
+  --twitn-surface-80: rgba(0, 0, 0, 0.8);
+  --twitn-surface-90: rgba(0, 0, 0, 0.9);
+
+  --twitn-soft-5: rgba(255, 255, 255, 0.05);
+  --twitn-soft-10: rgba(255, 255, 255, 0.1);
+  --twitn-soft-20: rgba(255, 255, 255, 0.2);
+  --twitn-soft-80: rgba(255, 255, 255, 0.8);
+  --twitn-solid: #ffffff;
+  --twitn-auth-bg: var(--twitn-soft-5);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --twitn-bg: #f9fafb;
+  --twitn-ink: #0f172a;
+  --twitn-ink-80: rgba(15, 23, 42, 0.8);
+  --twitn-ink-70: rgba(15, 23, 42, 0.7);
+  --twitn-ink-60: rgba(15, 23, 42, 0.6);
+  --twitn-ink-50: rgba(15, 23, 42, 0.5);
+
+  --twitn-line-10: rgba(15, 23, 42, 0.12);
+  --twitn-line-20: rgba(15, 23, 42, 0.18);
+  --twitn-line-30: rgba(15, 23, 42, 0.24);
+  --twitn-line-40: rgba(15, 23, 42, 0.32);
+
+  --twitn-surface-10: rgba(15, 23, 42, 0.04);
+  --twitn-surface-20: rgba(255, 255, 255, 0.85);
+  --twitn-surface-30: rgba(255, 255, 255, 0.88);
+  --twitn-surface-40: rgba(255, 255, 255, 0.92);
+  --twitn-surface-80: rgba(255, 255, 255, 0.95);
+  --twitn-surface-90: rgba(255, 255, 255, 0.97);
+
+  --twitn-soft-5: rgba(15, 23, 42, 0.04);
+  --twitn-soft-10: rgba(15, 23, 42, 0.06);
+  --twitn-soft-20: rgba(15, 23, 42, 0.1);
+  --twitn-soft-80: rgba(15, 23, 42, 0.14);
+  --twitn-solid: #ffffff;
+  --twitn-auth-bg: #ffffff;
 }
 
 * {
@@ -15,7 +74,8 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: #0b0b0b;
+  background: var(--twitn-bg);
+  color: var(--twitn-ink);
 }
 
 a {
@@ -58,5 +118,152 @@ a {
   -moz-osx-font-smoothing: grayscale;
 }
 
-@import "tailwindcss";
-@plugin "daisyui";
+.logo-mark {
+  transition: filter 150ms ease;
+}
+
+[data-theme="light"] .logo-mark {
+  filter: brightness(0) saturate(100%);
+}
+
+.auth-card {
+  background-color: var(--twitn-auth-bg);
+}
+
+[data-theme="light"] .btn.bg-white {
+  background-color: #0b0b0b;
+  color: #f8fafc;
+  border-color: #0b0b0b;
+}
+
+[data-theme="light"] .btn.bg-white.hover\:bg-white\/80:hover,
+[data-theme="light"] .btn.bg-white.hover\:bg-white:hover,
+[data-theme="light"] .btn.bg-white.hover\:bg-gray-100:hover {
+  background-color: #111827;
+  border-color: #111827;
+}
+
+.shadow,
+.shadow-sm,
+.shadow-md,
+.shadow-lg,
+.shadow-xl,
+.shadow-2xl {
+  box-shadow: none !important;
+}
+
+.text-white {
+  color: var(--twitn-ink);
+}
+
+[data-theme="light"] .text-amber-300 {
+  color: #b45309;
+}
+
+.text-white\/80 {
+  color: var(--twitn-ink-80);
+}
+
+.text-white\/70 {
+  color: var(--twitn-ink-70);
+}
+
+.text-white\/60 {
+  color: var(--twitn-ink-60);
+}
+
+.text-white\/50 {
+  color: var(--twitn-ink-50);
+}
+
+.placeholder-white\/70::placeholder {
+  color: var(--twitn-ink-70);
+}
+
+.placeholder-white\/50::placeholder {
+  color: var(--twitn-ink-50);
+}
+
+.border-white\/10 {
+  border-color: var(--twitn-line-10);
+}
+
+.border-white\/20 {
+  border-color: var(--twitn-line-20);
+}
+
+.border-white\/30 {
+  border-color: var(--twitn-line-30);
+}
+
+.border-white\/40 {
+  border-color: var(--twitn-line-40);
+}
+
+.bg-black\/10 {
+  background-color: var(--twitn-surface-10);
+}
+
+.bg-black\/20 {
+  background-color: var(--twitn-surface-20);
+}
+
+.bg-black\/30 {
+  background-color: var(--twitn-surface-30);
+}
+
+.bg-black\/40 {
+  background-color: var(--twitn-surface-40);
+}
+
+.bg-black\/80 {
+  background-color: var(--twitn-surface-80);
+}
+
+.bg-black\/90 {
+  background-color: var(--twitn-surface-90);
+}
+
+.bg-white\/5 {
+  background-color: var(--twitn-soft-5);
+}
+
+.bg-white\/10 {
+  background-color: var(--twitn-soft-10);
+}
+
+.bg-white\/20 {
+  background-color: var(--twitn-soft-20);
+}
+
+.bg-white\/80 {
+  background-color: var(--twitn-soft-80);
+}
+
+.bg-white {
+  background-color: var(--twitn-solid);
+}
+
+.hover\:bg-white\/5:hover {
+  background-color: var(--twitn-soft-5);
+}
+
+.hover\:bg-white\/20:hover {
+  background-color: var(--twitn-soft-20);
+}
+
+.hover\:bg-white\/80:hover {
+  background-color: var(--twitn-soft-80);
+}
+
+.hover\:bg-white:hover {
+  background-color: var(--twitn-solid);
+}
+
+.hover\:text-white:hover {
+  color: var(--twitn-ink);
+}
+
+.hover\:text-white\/80:hover {
+  color: var(--twitn-ink-80);
+}
