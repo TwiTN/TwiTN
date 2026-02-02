@@ -1,23 +1,20 @@
 services:
   db:
+    restart: always
     image: postgres
     volumes:
       - ./schema:/docker-entrypoint-initdb.d:z
-    ports:
-      - "5432:5432"
     env_file:
       - .env
-  
+
   back:
     restart: always
-    build: 
+    build:
       context: .
       dockerfile: Containerfile
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8069:8000"
     env_file:
       - .env
     depends_on:
       - db
-
-
